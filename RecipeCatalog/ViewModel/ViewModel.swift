@@ -20,16 +20,12 @@ class ViewModel: ContextReferencing {
     
     required init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        fetchData()
+        fetchCategories()
     }
     
     // MARK: - Data retrieval
     
-    // This gives the UI the data that is already initialized from the presets.
-    func fetchData() {
-         fetchRecipes()
-         fetchCategories()
-     }
+    // This gives the UI the data that is already initialized from the presets
     
     func fetchRecipes(for categoryName: String? = nil) {
         var descriptor: FetchDescriptor<Recipe>
@@ -41,13 +37,18 @@ class ViewModel: ContextReferencing {
                     recipe.categories.contains(where: { $0.name == categoryName }) 
                 },
                 sortBy: [SortDescriptor(\.title)])
-            do {
-                recipes = try modelContext.fetch(descriptor)
-            } catch {
-                print("Error fetching recipes: \(error)")
-                recipes = []
-            }
         } else {
+            // This will fetch all recipes if no category is set
+            descriptor = FetchDescriptor<Recipe> (
+                predicate: #Predicate<Recipe> { _ in true },
+                sortBy: [SortDescriptor(\.title)]
+            )
+        }
+        
+        do {
+            recipes = try modelContext.fetch(descriptor)
+        } catch {
+            print("Error fetching recipes: \(error)")
             recipes = []
         }
         
@@ -83,7 +84,7 @@ class ViewModel: ContextReferencing {
     
     // MARK: - Context referencing
     func update() {
-        fetchData()
+        fetchCategories()
     }
     
 }

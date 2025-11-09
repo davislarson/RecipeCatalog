@@ -26,7 +26,7 @@ struct CategoryListView: View {
             }
             ToolbarItem {
                 Button(action: vm.addRecipe) {
-                    Label("Add Item", systemImage: "plus")
+                    Label("Add Category", systemImage: "plus")
                 }
             }
         }

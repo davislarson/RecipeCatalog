@@ -48,6 +48,10 @@ struct RecipeListView: View {
             .onAppear {
                 vm.fetchRecipes(for: recipeCategoryName)
             }
+            //- refetch when category changes
+            .onChange(of: recipeCategoryName) { oldValue, newValue in
+                vm.fetchRecipes(for: newValue)
+            }
         } else {
             ContentUnavailableView(
                 "Select a category to see recipes.",
