@@ -21,7 +21,7 @@ struct PresetRecipes {
         context.insert(dessertCategory)
         context.insert(comfortCategory)
         
-        // Recipe 1: Classic Pancakes
+        // Classic Pancakes
         let pancakeIngredients = [
             Ingredient(order: 1, quantity: 1, unit: "cup", name: "all-purpose flour", notes: nil),
             Ingredient(order: 2, quantity: 2, unit: "tbsp", name: "sugar", notes: nil),
@@ -70,7 +70,7 @@ struct PresetRecipes {
         breakfastCategory.recipes.append(pancakeRecipe)
         quickCategory.recipes.append(pancakeRecipe)
         
-        // Recipe 2: Chocolate Chip Cookies
+        // Chocolate Chip Cookies
         let cookieIngredients = [
             Ingredient(order: 1, quantity: 2, unit: "cups", name: "all-purpose flour", notes: nil),
             Ingredient(order: 2, quantity: 1, unit: "tsp", name: "baking soda", notes: nil),

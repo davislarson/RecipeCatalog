@@ -10,50 +10,11 @@ import SwiftData
 
 struct ContentView: View {
     @SwiftDataViewModel private var vm: ViewModel
-
+    @State private var navigationContext = NavigationContext()
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(vm.recipes) { recipe in
-                    @Bindable var bindableRecipe = recipe
-                    NavigationLink {
-                        Text("\(recipe.title)")
-                    } label: {
-                        Text(recipe.title)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } content: {
-            Text("Details")
-        } detail: {
-            Text("Select an recipe")
-        }
-    }
-
-    private func addItem() {
-//        withAnimation {
-//            let newItem = Item(timestamp: Date())
-//            modelContext.insert(newItem)
-//        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            for index in offsets {
-//                modelContext.delete(items[index])
-//            }
-//        }
+        ThreeColumnContentView()
+            .environment(navigationContext)
     }
 }
 

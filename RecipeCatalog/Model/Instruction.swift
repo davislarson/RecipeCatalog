@@ -19,4 +19,7 @@ final class Instruction {
         self.text = text
         self.recipe = recipe
     }
+    
+    // addInstruction
+    // removeInstruction
 }

@@ -10,7 +10,7 @@ import SwiftData
 
 struct DataInitializer {
     
-    // Option 1: Simple check - initialize if no recipes exist
+    // Simple check - initialize if no recipes exist
     static func initializeIfNeeded(context: ModelContext) {
         let descriptor = FetchDescriptor<Recipe>()
         

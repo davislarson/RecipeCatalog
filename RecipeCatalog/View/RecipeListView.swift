@@ -1,11 +1,13 @@
+//
+//  RecipeListView.swift
+//  RecipeCatalog
+//
+//  Created by Davis Larson on 11/9/25.
+//
 
-## Found out about group from Claude
-### My prompt: 
-If the recipe list is empty than how can I show that to the user
+import SwiftUI
 
-### Clause response
-You can check if vm.recipes is empty and show a different ContentUnavailableView. Here's the updated code:
-swiftstruct RecipeListView: View {
+struct RecipeListView: View {
     let recipeCategoryName: String?
     
     @Environment(NavigationContext.self) private var navigationContext
@@ -15,9 +17,11 @@ swiftstruct RecipeListView: View {
         self.recipeCategoryName = recipeCategoryName
     }
     
+    
     var body: some View {
         @Bindable var navigationContext = navigationContext
         if let recipeCategoryName {
+            // Claude taught me how to use this group to apply multiple view modifiers to an empty state or list state
             Group {
                 if vm.recipes.isEmpty {
                     ContentUnavailableView(
@@ -47,32 +51,12 @@ swiftstruct RecipeListView: View {
         } else {
             ContentUnavailableView(
                 "Select a category to see recipes.",
-                systemImage: "exclamationmark.triangle"  // Fixed typo: "exclemationmark" -> "exclamationmark"
+                systemImage: "exclamationmark.triangle",
             )
         }
     }
 }
-Key changes:
 
-Wrapped the List in a Group so you can apply .toolbar and .onAppear to both the empty state and the list
-Added a check for vm.recipes.isEmpty to show an appropriate empty state
-Fixed the typo in your system image name: "exclemationmark.triangle" → "exclamationmark.triangle"
-
-Alternative approach - Use ContentUnavailableView with a search configuration (iOS 17+):
-swiftList(selection: $navigationContext.selectedRecipe) {
-    ForEach(vm.recipes) { recipe in
-        NavigationLink(recipe.title, value: recipe)
-    }
-    .onDelete(perform: vm.deleteRecipes)
-}
-.overlay {
-    if vm.recipes.isEmpty {
-        ContentUnavailableView(
-            "No Recipes",
-            systemImage: "fork.knife",
-            description: Text("Add a recipe to get started.")
-        )
-    }
-}
-This approach keeps the toolbar visible even when the list is empty, which might be better UX since users can still tap the "+" button.
-
+//#Preview {
+//    RecipeListView()
+//}
