@@ -9,13 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var recipes: [Recipe]
+    @SwiftDataViewModel private var vm: ViewModel
 
     var body: some View {
         NavigationSplitView {
             List {
-                ForEach(recipes) { recipe in
+                ForEach(vm.recipes) { recipe in
+                    @Bindable var bindableRecipe = recipe
                     NavigationLink {
                         Text("\(recipe.title)")
                     } label: {
@@ -34,6 +34,8 @@ struct ContentView: View {
                     }
                 }
             }
+        } content: {
+            Text("Details")
         } detail: {
             Text("Select an recipe")
         }
