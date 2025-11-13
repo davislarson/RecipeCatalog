@@ -20,6 +20,4 @@ final class Instruction {
         self.recipe = recipe
     }
     
-    // addInstruction
-    // removeInstruction
 }

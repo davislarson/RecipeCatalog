@@ -11,16 +11,16 @@ struct ThreeColumnContentView: View {
     @Environment(NavigationContext.self) private var navigationContext
     
     var body: some View {
-        @Bindable var navigationConext = navigationContext
-        NavigationSplitView(columnVisibility: $navigationConext.columnVisibility) {
+        @Bindable var navigationContext = navigationContext
+        NavigationSplitView(columnVisibility: $navigationContext.columnVisibility) {
             CategoryListView()
                 .navigationTitle(navigationContext.sideBarTitle)
         } content: {
-            RecipeListView(recipeCategoryName: navigationConext.selectedCategoryName)
-                .navigationTitle(navigationConext.contentListTitle)
+            RecipeListView(recipeCategoryName: navigationContext.selectedCategoryName)
+                .navigationTitle(navigationContext.contentListTitle)
         } detail: {
             NavigationStack{
-                RecipeDetailView(recipe: navigationConext.selectedRecipe)
+                RecipeDetailView(recipe: navigationContext.selectedRecipe)
             }
         }
     }

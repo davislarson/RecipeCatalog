@@ -10,7 +10,9 @@ import SwiftData
 
 @Model
 final class Category {
-    var name: String
+    @Attribute(.unique) var name: String
+    
+    // Many-to-many relationship with Recipe
     var recipes: [Recipe]
     
     
@@ -18,6 +20,7 @@ final class Category {
         self.name = name
         self.recipes = recipes
     }
+    
     // addRecipe
     // removeReicpe
 }

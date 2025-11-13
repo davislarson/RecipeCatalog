@@ -19,6 +19,8 @@ final class Recipe {
     var caloriesPerServing: Int?
     var isFavorite: Bool
     var notes: String?
+    
+    // This is a many-to-many relationship
     var categories: [Category]
     
     // Recipe to ingredient is one to many. When deleting a recipe all ingredients are deleted.
@@ -48,15 +50,29 @@ final class Recipe {
     }
     
     
+    // MARK: - Helper Methods
+    
+    func toggleFavorite() {
+        isFavorite.toggle()
+    }
+    
+    func addCategory(_ category: Category) {
+        if !categories.contains(where: { $0.name == category.name }) {
+            categories.append(category)
+            category.recipes.append(self)
+        }
+    }
+    
+    func removeCategory(_ category: Category) {
+        categories.removeAll(where: { $0.name == category.name })
+        category.recipes.removeAll(where: { $0.title == self.title })
+    }
     
     // TODO
-    //toggleFavorite
     //addIngredient
     //removeIngredient
     //addInstruction
     //removeInstruction
-    //addCategory
-    //removeCategory
 }
 
 enum DifficultyLevel: String, Codable {

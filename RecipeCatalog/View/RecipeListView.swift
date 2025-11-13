@@ -11,7 +11,7 @@ struct RecipeListView: View {
     let recipeCategoryName: String?
     
     @Environment(NavigationContext.self) private var navigationContext
-    @SwiftDataViewModel private var vm: ViewModel
+    @Environment(ViewModel.self) private var vm
     
     init(recipeCategoryName: String?) {
         self.recipeCategoryName = recipeCategoryName
@@ -20,47 +20,59 @@ struct RecipeListView: View {
     
     var body: some View {
         @Bindable var navigationContext = navigationContext
-        if let recipeCategoryName {
-            // Claude taught me how to use this group to apply multiple view modifiers to an empty state or list state
-            Group {
+        
+        // Claude taught me how to use this group to apply multiple view modifiers to an empty state or list state
+        Group {
+            if let recipeCategoryName {
                 if vm.recipes.isEmpty {
                     ContentUnavailableView(
-                        "No Recipes",
+                        "No Recipes in \(recipeCategoryName)",
                         systemImage: "fork.knife",
                         description: Text("Add a recipe to get started.")
                     )
                 } else {
-                    List(selection: $navigationContext.selectedRecipe) {
-                        ForEach(vm.recipes) { recipe in
-                            NavigationLink(recipe.title, value: recipe)
+                    VStack {
+                        TextField("Search", text: .constant(""))
+                            .padding()
+                        List(selection: $navigationContext.selectedRecipe) {
+                            ForEach(vm.recipes) { recipe in
+                                NavigationLink(recipe.title, value: recipe)
+                            }
+                            .onDelete(perform: vm.deleteRecipes)
                         }
-                        .onDelete(perform: vm.deleteRecipes)
                     }
                 }
+            } else {
+                ContentUnavailableView(
+                    "Select a Category",
+                    systemImage: "list.bullet",
+                    description: Text("Choose a category from the sidebar to view its recipes.")
+                )
             }
-            .toolbar {
-                ToolbarItem {
-                    Button(action: vm.addRecipe) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+            ToolbarItem {
+                Button(action: vm.addRecipe) {
+                    Label("Add Item", systemImage: "plus")
                 }
+
             }
-            .onAppear {
-                vm.fetchRecipes(for: recipeCategoryName)
-            }
-            //- refetch when category changes
-            .onChange(of: recipeCategoryName) { oldValue, newValue in
-                vm.fetchRecipes(for: newValue)
-            }
-        } else {
-            ContentUnavailableView(
-                "Select a category to see recipes.",
-                systemImage: "exclamationmark.triangle",
-            )
+        }
+        .onAppear {
+            print("RecipeListView appeared with category: \(recipeCategoryName ?? "nil")")
+            vm.fetchRecipes(for: recipeCategoryName)
+        }
+        //- refetch when category changes
+        .onChange(of: recipeCategoryName) { oldValue, newValue in
+            print("Category changed from \(oldValue ?? "nil") to \(newValue ?? "nil")")
+            vm.fetchRecipes(for: newValue)
         }
     }
 }
 
-//#Preview {
-//    RecipeListView()
-//}
+#Preview {
+    RecipeListView(recipeCategoryName: "Desserts")
+}

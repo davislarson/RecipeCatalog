@@ -9,16 +9,37 @@ import SwiftUI
 import SwiftData
 
 @Observable
-class ViewModel: ContextReferencing {
+final class ViewModel: ContextReferencing {
+    
     
     // MARK: - Properties
-    private let modelContext: ModelContext
-    var recipes: [Recipe] = []
+    private var modelContext: ModelContext
+    
+    var allRecipes: [Recipe]  {
+        (try? modelContext.fetch(FetchDescriptor())) ?? []
+    }
+    
     var categories: [Category] = []
+    
+    var recipes: [Recipe] = []
+    
+    
+    // MARK: - Navigation properties
+    
+    var selectedCategoryName: String? = nil
+    var selectedRecipe: Recipe? = nil
+    var columnVisibility: NavigationSplitViewVisibility = .automatic
+    
+    var sideBarTitle = "Categories"
+    
+    var contentListTitle: String {
+       selectedCategoryName ?? "Recipes"
+    }
     
     // MARK: Initialization
     
     required init(modelContext: ModelContext) {
+        print("⚠️ ViewModel INIT called - this should only happen ONCE per view")
         self.modelContext = modelContext
         fetchCategories()
     }
@@ -44,9 +65,8 @@ class ViewModel: ContextReferencing {
                 sortBy: [SortDescriptor(\.title)]
             )
         }
-        
         do {
-            recipes = try modelContext.fetch(descriptor)
+            recipes = (try modelContext.fetch(descriptor))
         } catch {
             print("Error fetching recipes: \(error)")
             recipes = []
@@ -57,7 +77,7 @@ class ViewModel: ContextReferencing {
     func fetchCategories() {
         let descriptor = FetchDescriptor<Category>(sortBy: [SortDescriptor(\.name)])
         do {
-            categories = try modelContext.fetch(descriptor)
+            categories = (try modelContext.fetch(descriptor))
         } catch {
             print("Error fetching categories: \(error)")
             categories = []
@@ -76,6 +96,26 @@ class ViewModel: ContextReferencing {
     
     func deleteRecipes(offsets: IndexSet) {
         
+    }
+    
+    func addCategory() {
+        let newCategory = Category(name: "New Category", recipes: [])
+            modelContext.insert(newCategory)
+            saveChanges()
+            fetchCategories()
+        }
+        
+    func deleteCategories(offsets: IndexSet) {
+        for index in offsets {
+            let category = categories[index]
+            // Remove category from all recipes
+            for recipe in category.recipes {
+                recipe.categories.removeAll(where: { $0.name == category.name })
+            }
+            modelContext.delete(category)
+        }
+        saveChanges()
+        fetchCategories()
     }
     
     func saveChanges() {

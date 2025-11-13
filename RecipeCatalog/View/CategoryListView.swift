@@ -9,26 +9,32 @@ import SwiftUI
 
 struct CategoryListView: View {
     @Environment(NavigationContext.self) private var navigationContext
-    @SwiftDataViewModel private var vm: ViewModel
+    @Environment(ViewModel.self) private var vm
     
     var body: some View {
         @Bindable var navigationContext = navigationContext
         
         List(selection: $navigationContext.selectedCategoryName) {
+            
+            NavigationLink("All Recipes", value: "")
+            
             ForEach(vm.categories) { category in
                 NavigationLink(category.name, value: category.name)
             }
-            .onDelete(perform: vm.deleteRecipes)
+            .onDelete(perform: vm.deleteCategories)
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
             }
-            ToolbarItem {
-                Button(action: vm.addRecipe) {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: vm.addCategory) {
                     Label("Add Category", systemImage: "plus")
                 }
             }
+        }
+        .onAppear {
+            vm.fetchCategories()
         }
     }
 }

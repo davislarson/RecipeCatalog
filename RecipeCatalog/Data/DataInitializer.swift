@@ -8,6 +8,9 @@
 import Foundation
 import SwiftData
 
+
+// Asking claude how to set up the initial data gave me this file
+// Here is the chat link: https://claude.ai/share/69dca26e-dbb1-48b7-a053-08f1284e8acf
 struct DataInitializer {
     
     // Simple check - initialize if no recipes exist

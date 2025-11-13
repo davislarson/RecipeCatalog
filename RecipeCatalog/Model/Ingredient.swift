@@ -26,7 +26,5 @@ final class Ingredient {
         self.notes = notes
         self.recipe = recipe
     }
-    
-    //addIngredient
-    //removeIngredient
+
 }
