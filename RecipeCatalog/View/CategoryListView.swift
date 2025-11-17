@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct CategoryListView: View {
-    @Environment(NavigationContext.self) private var navigationContext
     @Environment(ViewModel.self) private var vm
     
     var body: some View {
-        @Bindable var navigationContext = navigationContext
+        @Bindable var vm = vm
         
-        List(selection: $navigationContext.selectedCategoryName) {
+        List(selection: $vm.selectedCategoryName) {
             
             NavigationLink("All Recipes", value: "")
             

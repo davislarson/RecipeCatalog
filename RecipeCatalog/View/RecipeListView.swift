@@ -10,7 +10,6 @@ import SwiftUI
 struct RecipeListView: View {
     let recipeCategoryName: String?
     
-    @Environment(NavigationContext.self) private var navigationContext
     @Environment(ViewModel.self) private var vm
     
     init(recipeCategoryName: String?) {
@@ -19,7 +18,7 @@ struct RecipeListView: View {
     
     
     var body: some View {
-        @Bindable var navigationContext = navigationContext
+        @Bindable var vm = vm
         
         // Claude taught me how to use this group to apply multiple view modifiers to an empty state or list state
         Group {
@@ -34,7 +33,7 @@ struct RecipeListView: View {
                     VStack {
                         TextField("Search", text: .constant(""))
                             .padding()
-                        List(selection: $navigationContext.selectedRecipe) {
+                        List(selection: $vm.selectedRecipe) {
                             ForEach(vm.recipes) { recipe in
                                 NavigationLink(recipe.title, value: recipe)
                             }

@@ -15,28 +15,38 @@ import SwiftData // Allows ModelContainer to be found
 @main
 struct RecipeCatalogApp: App {
     var sharedModelContainer: ModelContainer = {
-            let schema = Schema([
-                Recipe.self,
-                Category.self,
-                Ingredient.self,
-                Instruction.self
-            ])
-            let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let schema = Schema([
+            Recipe.self,
+            Category.self,
+            Ingredient.self,
+            Instruction.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
-            do {
-                return try ModelContainer(for: schema, configurations: [modelConfiguration])
-            } catch {
-                fatalError("Could not create ModelContainer: \(error)")
+        do {
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            
+            // Initialize sample data if needed
+            let context = ModelContext(container)
+            let descriptor = FetchDescriptor<Recipe>()
+            
+            if let existingRecipes = try? context.fetch(descriptor), existingRecipes.isEmpty {
+                print("No recipes found. Initializing with sample data...")
+                Category.insertSampleData(modelContext: context)
+                try? context.save()
+            } else {
+                print("Found existing recipes. Skipping initialization.")
             }
+            
+            return container
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
     }()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .task {
-                    let context = ModelContext(sharedModelContainer)
-                    DataInitializer.initializeIfNeeded(context: context)
-                }
         }
         .modelContainer(sharedModelContainer)
     }

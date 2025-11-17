@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct ThreeColumnContentView: View {
-    @Environment(NavigationContext.self) private var navigationContext
+    @Environment(ViewModel.self) private var vm
     
     var body: some View {
-        @Bindable var navigationContext = navigationContext
-        NavigationSplitView(columnVisibility: $navigationContext.columnVisibility) {
+        @Bindable var vm = vm
+        NavigationSplitView(columnVisibility: $vm.columnVisibility) {
             CategoryListView()
-                .navigationTitle(navigationContext.sideBarTitle)
+                .navigationTitle(vm.sideBarTitle)
         } content: {
-            RecipeListView(recipeCategoryName: navigationContext.selectedCategoryName)
-                .navigationTitle(navigationContext.contentListTitle)
+            RecipeListView(recipeCategoryName: vm.selectedCategoryName)
+                .navigationTitle(vm.contentListTitle)
         } detail: {
             NavigationStack{
-                RecipeDetailView(recipe: navigationContext.selectedRecipe)
+                RecipeDetailView(recipe: vm.selectedRecipe)
             }
         }
     }
