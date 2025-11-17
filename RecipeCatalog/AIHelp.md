@@ -76,3 +76,49 @@ swiftList(selection: $navigationContext.selectedRecipe) {
 }
 This approach keeps the toolbar visible even when the list is empty, which might be better UX since users can still tap the "+" button.
 
+
+### my prompt
+ForEach(recipe.instructions, id: \.order) { instruction in
+    HStack(alignment: .top, spacing: 12) {
+        ZStack {
+            Circle()
+                .fill(Color.blue.opacity(0.1))
+                .frame(width: 32, height: 32)
+            
+            Text("\(instruction.order)")
+                .font(.headline)
+                .foregroundStyle(.blue)
+        }
+        
+        Text(instruction.text)
+            .font(.body)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+in this the order is randomized how can I make it so that each time it is ordered
+### response
+The issue is that ForEach with id: \.order doesn't guarantee the sorting order - it just uses order as a unique identifier. You need to sort the instructions array before iterating over it.
+Here's the fix:
+swiftForEach(recipe.instructions.sorted(by: { $0.order < $1.order }), id: \.order) { instruction in
+    HStack(alignment: .top, spacing: 12) {
+        ZStack {
+            Circle()
+                .fill(Color.blue.opacity(0.1))
+                .frame(width: 32, height: 32)
+            
+            Text("\(instruction.order)")
+                .font(.headline)
+                .foregroundStyle(.blue)
+        }
+        
+        Text(instruction.text)
+            .font(.body)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+The key change is adding .sorted(by: { $0.order < $1.order }) which will sort the instructions in ascending order by their order property before displaying them.
+You'll likely want to do the same thing for your ingredients:
+swiftForEach(recipe.ingredients.sorted(by: { $0.order < $1.order }), id: \.order) { ingredient in
+    // your ingredient view code
+}
+This ensures that both instructions and ingredients are always displayed in the correct sequential order.

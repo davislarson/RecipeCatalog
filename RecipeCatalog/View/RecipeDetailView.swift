@@ -1,15 +1,8 @@
-//
-//  RecipeDetailView.swift
-//  RecipeCatalog
-//
-//  Created by Davis Larson on 11/9/25.
-//
-
 import SwiftUI
 
 struct RecipeDetailView: View {
-//    @Environment(ViewModel.self) private var vm
     @Environment(\.editMode) private var editMode
+    @State private var showingEditSheet = false
     
     var recipe: Recipe?
     
@@ -21,168 +14,166 @@ struct RecipeDetailView: View {
                 description: Text("Select a recipe.")
             )
         } else if let recipe = recipe {
-            if editMode?.wrappedValue.isEditing == true {
-                EditRecipeView(recipe: recipe)
-            } else {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        // MARK: - Header
-                        HStack {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(recipe.title)
-                                    .font(.largeTitle)
-                                    .bold()
-                                
-                                Text("By \(recipe.creator)")
-                                    .font(.title3)
-                                    .foregroundStyle(.secondary)
-                                
-                                Text("Date created: \(recipe.dateCreated.formatted(date: .abbreviated, time: .omitted))")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // MARK: - Header
+                    HStack {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(recipe.title)
+                                .font(.largeTitle)
+                                .bold()
                             
-                            Spacer()
+                            Text("By \(recipe.creator)")
+                                .font(.title3)
+                                .foregroundStyle(.secondary)
                             
-                            Button {
-                                recipe.toggleFavorite()
-                            } label: {
-                                Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                                    .foregroundStyle(recipe.isFavorite ? .red : .primary)
-                            }
+                            Text("Date created: \(recipe.dateCreated.formatted(date: .abbreviated, time: .omitted))")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
                         
-                        Divider()
+                        Spacer()
                         
-                        // MARK: - Quick Info Grid
-                        VStack(spacing: 12) {
-                            HStack {
-                                InfoCard(icon: "clock", label: "Prep Time", value: "\(recipe.prepTime) min")
-                                InfoCard(icon: "person.2", label: "Serves", value: "\(recipe.serves)")
+                        Button {
+                            recipe.toggleFavorite()
+                        } label: {
+                            Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
+                                .foregroundStyle(recipe.isFavorite ? .red : .primary)
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // MARK: - Quick Info Grid
+                    VStack(spacing: 12) {
+                        HStack {
+                            InfoCard(icon: "clock", label: "Prep Time", value: "\(recipe.prepTime) min")
+                            InfoCard(icon: "person.2", label: "Serves", value: "\(recipe.serves)")
+                        }
+                        
+                        HStack {
+                            InfoCard(icon: "chart.bar", label: "Difficulty", value: recipe.difficulty.rawValue)
+                            if let calories = recipe.caloriesPerServing {
+                                InfoCard(icon: "flame", label: "Calories Per Serving", value: "\(calories)")
+                            } else {
+                                InfoCard(icon: "flame", label: "Calories Per Serving", value: "N/A")
                             }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // MARK: - Categories
+                    if !recipe.categories.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Categories")
+                                .font(.headline)
                             
                             HStack {
-                                InfoCard(icon: "chart.bar", label: "Difficulty", value: recipe.difficulty.rawValue)
-                                if let calories = recipe.caloriesPerServing {
-                                    InfoCard(icon: "flame", label: "Calories Per Serving", value: "\(calories)")
-                                } else {
-                                    InfoCard(icon: "flame", label: "Calories Per Serving", value: "N/A")
+                                ForEach(recipe.categories, id: \.name) { category in
+                                    Text(category.name)
+                                        .font(.subheadline)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.blue.opacity(0.1))
+                                        .foregroundStyle(.blue)
+                                        .cornerRadius(8)
                                 }
                             }
                         }
                         
                         Divider()
+                    }
+                    
+                    // MARK: - Ingredients
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Ingredients")
+                            .font(.title2)
+                            .bold()
                         
-                        // MARK: - Categories
-                        if !recipe.categories.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Categories")
-                                    .font(.headline)
-                                
-                                HStack {
-                                    ForEach(recipe.categories, id: \.name) { category in
-                                        Text(category.name)
-                                            .font(.subheadline)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(Color.blue.opacity(0.1))
-                                            .foregroundStyle(.blue)
-                                            .cornerRadius(8)
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(recipe.ingredients.sorted(by: { $0.order < $1.order }), id: \.order) { ingredient in
+                                HStack(alignment: .top, spacing: 8) {
+                                    Text("•")
+                                        .font(.headline)
+                                        .foregroundStyle(.blue)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(ingredient.quantity) \(ingredient.unit) \(ingredient.name)")
+                                            .font(.body)
+                                        
+                                        if let notes = ingredient.notes, !notes.isEmpty {
+                                            Text(notes)
+                                                .font(.caption)
+                                                .italic()
+                                                .foregroundStyle(.secondary)
+                                        }
                                     }
                                 }
                             }
-                            
-                            Divider()
                         }
+                    }
+                    
+                    Divider()
+                    
+                    // MARK: - Instructions
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Instructions")
+                            .font(.title2)
+                            .bold()
                         
-                        // MARK: - Ingredients
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Ingredients")
-                                .font(.title2)
-                                .bold()
-                            
-                            VStack(alignment: .leading, spacing: 8) {
-                                ForEach(recipe.ingredients.sorted(by: { $0.order < $1.order }), id: \.order) { ingredient in
-                                    HStack(alignment: .top, spacing: 8) {
-                                        Text("•")
+                        VStack(alignment: .leading, spacing: 16) {
+                            ForEach(recipe.instructions.sorted(by: { $0.order < $1.order }), id: \.order) { instruction in
+                                HStack(alignment: .top, spacing: 12) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.blue.opacity(0.1))
+                                            .frame(width: 32, height: 32)
+                                        
+                                        Text("\(instruction.order + 1)")
                                             .font(.headline)
                                             .foregroundStyle(.blue)
-                                        
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text("\(ingredient.quantity) \(ingredient.unit) \(ingredient.name)")
-                                                .font(.body)
-                                            
-                                            if let notes = ingredient.notes, !notes.isEmpty {
-                                                Text(notes)
-                                                    .font(.caption)
-                                                    .italic()
-                                                    .foregroundStyle(.secondary)
-                                            }
-                                        }
                                     }
+                                    
+                                    Text(instruction.text)
+                                        .font(.body)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
-                        
+                    }
+                    
+                    // MARK: - Notes
+                    if let notes = recipe.notes, !notes.isEmpty {
                         Divider()
                         
-                        // MARK: - Instructions
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Instructions")
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Notes")
                                 .font(.title2)
                                 .bold()
                             
-                            VStack(alignment: .leading, spacing: 16) {
-                                ForEach(recipe.instructions.sorted(by: { $0.order < $1.order }), id: \.order) { instruction in
-                                    HStack(alignment: .top, spacing: 12) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.blue.opacity(0.1))
-                                                .frame(width: 32, height: 32)
-                                            
-                                            Text("\(instruction.order)")
-                                                .font(.headline)
-                                                .foregroundStyle(.blue)
-                                        }
-                                        
-                                        Text(instruction.text)
-                                            .font(.body)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // MARK: - Notes
-                        if let notes = recipe.notes, !notes.isEmpty {
-                            Divider()
-                            
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Notes")
-                                    .font(.title2)
-                                    .bold()
-                                
-                                Text(notes)
-                                    .font(.body)
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.yellow.opacity(0.1))
-                                    .cornerRadius(8)
-                            }
+                            Text(notes)
+                                .font(.body)
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.yellow.opacity(0.1))
+                                .cornerRadius(8)
                         }
                     }
-                    .padding()
                 }
-                .navigationTitle(recipe.title)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        EditButton()
+                .padding()
+            }
+            .navigationTitle(recipe.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Edit") {
+                        showingEditSheet = true
                     }
                 }
+            }
+            .sheet(isPresented: $showingEditSheet) {
+                RecipeEditView(recipe: recipe)
             }
         }
     }
@@ -190,7 +181,6 @@ struct RecipeDetailView: View {
 
 // MARK: - Preview
 #Preview {
-    // Create sample data for preview
     let category1 = Category(name: "Desserts", recipes: [])
     let category2 = Category(name: "Quick", recipes: [])
     
@@ -218,7 +208,6 @@ struct RecipeDetailView: View {
         instructions: [instruction1, instruction2, instruction3, instruction4]
     )
     
-    // Set up bidirectional relationships
     ingredient1.recipe = sampleRecipe
     ingredient2.recipe = sampleRecipe
     ingredient3.recipe = sampleRecipe

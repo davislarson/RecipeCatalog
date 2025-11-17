@@ -53,7 +53,7 @@ struct RecipeListView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
             }
-            ToolbarItem {
+            ToolbarItem(placement: .primaryAction) {
                 Button(action: vm.addRecipe) {
                     Label("Add Item", systemImage: "plus")
                 }

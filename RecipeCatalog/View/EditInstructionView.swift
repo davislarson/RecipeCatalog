@@ -7,12 +7,37 @@
 
 import SwiftUI
 
-struct EditCategoryView: View {
+struct EditInstructionView: View {
+    @Bindable var instruction: Instruction
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var text: String
+    
+    init(instruction: Instruction) {
+        self.instruction = instruction
+        _text = State(initialValue: instruction.text)
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Form {
+            Section("Step \(instruction.order)") {
+                TextEditor(text: $text)
+                    .frame(minHeight: 150)
+            }
+        }
+        .navigationTitle("Edit Instruction")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") {
+                    instruction.text = text
+                    dismiss()
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    EditCategoryView()
+//    EditInstructionView()
 }

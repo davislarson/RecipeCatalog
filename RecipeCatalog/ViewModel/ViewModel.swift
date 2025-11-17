@@ -28,7 +28,7 @@ final class ViewModel: ContextReferencing {
     
     var selectedCategoryName: String? = nil
     var selectedRecipe: Recipe? = nil
-    var columnVisibility: NavigationSplitViewVisibility = .automatic
+    var columnVisibility: NavigationSplitViewVisibility = .all
     
     var sideBarTitle = "Categories"
     
@@ -87,6 +87,9 @@ final class ViewModel: ContextReferencing {
     
     // MARK: - Model Access
     
+    var allCategories: [Category] {
+        (try? modelContext.fetch(FetchDescriptor<Category>())) ?? []
+    }
     
     // MARK: - User Intents
     
@@ -116,6 +119,36 @@ final class ViewModel: ContextReferencing {
         }
         saveChanges()
         fetchCategories()
+    }
+    
+    func deleteAllIngredients(from recipe: Recipe) {
+        recipe.ingredients.forEach { ingredient in
+            modelContext.delete(ingredient)
+        }
+        recipe.ingredients.removeAll()
+    }
+    
+    func deleteIngredient(_ ingredient: Ingredient) {
+        modelContext.delete(ingredient)
+    }
+    
+    func insertIngredient(_ ingredient: Ingredient) {
+        modelContext.insert(ingredient)
+    }
+    
+    func deleteAllInstructions(from recipe: Recipe) {
+        recipe.instructions.forEach { instruction in
+            modelContext.delete(instruction)
+        }
+        recipe.instructions.removeAll()
+    }
+
+    func deleteInstruction(_ instruction: Instruction) {
+        modelContext.delete(instruction)
+    }
+    
+    func insertInstruction(_ instruction: Instruction) {
+        modelContext.insert(instruction)
     }
     
     func saveChanges() {
