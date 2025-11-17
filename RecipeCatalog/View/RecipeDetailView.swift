@@ -22,23 +22,34 @@ struct RecipeDetailView: View {
             )
         } else if let recipe = recipe {
             if editMode?.wrappedValue.isEditing == true {
-                EditRecipeView()
+                EditRecipeView(recipe: recipe)
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         // MARK: - Header
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(recipe.title)
-                                .font(.largeTitle)
-                                .bold()
+                        HStack {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(recipe.title)
+                                    .font(.largeTitle)
+                                    .bold()
+                                
+                                Text("By \(recipe.creator)")
+                                    .font(.title3)
+                                    .foregroundStyle(.secondary)
+                                
+                                Text("Date created: \(recipe.dateCreated.formatted(date: .abbreviated, time: .omitted))")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
                             
-                            Text("By \(recipe.creator)")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
+                            Spacer()
                             
-                            Text("Date created: \(recipe.dateCreated.formatted(date: .abbreviated, time: .omitted))")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            Button {
+                                recipe.toggleFavorite()
+                            } label: {
+                                Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
+                                    .foregroundStyle(recipe.isFavorite ? .red : .primary)
+                            }
                         }
                         
                         Divider()
@@ -166,12 +177,7 @@ struct RecipeDetailView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
-                        Button {
-                            recipe.toggleFavorite()
-                        } label: {
-                            Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                                .foregroundStyle(recipe.isFavorite ? .red : .primary)
-                        }
+
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         EditButton()
