@@ -9,21 +9,54 @@ import Foundation
 import SwiftData
 
 extension Category {
+    // MARK: - Categories
+    
     static let breakfast = Category(name: "Breakfast", recipes: [])
     static let quick = Category(name: "Quick", recipes: [])
     static let desserts = Category(name: "Desserts", recipes: [])
     static let comfortFood = Category(name: "Comfort Food", recipes: [])
+    static let dinner = Category(name: "Dinner", recipes: [])
+    static let sandwiches = Category(name: "Sandwiches", recipes: [])
+    static let soups = Category(name: "Soups", recipes: [])
+    static let cheap = Category(name: "Cheap", recipes: [])
     
+    // MARK: - Insert into ModelContext
     static func insertSampleData(modelContext: ModelContext) {
-        // Add the categories to the model context
+        
+        // MARK: - Add Categories
         modelContext.insert(breakfast)
         modelContext.insert(quick)
         modelContext.insert(desserts)
         modelContext.insert(comfortFood)
+        modelContext.insert(dinner)
+        modelContext.insert(sandwiches)
+        modelContext.insert(soups)
+        modelContext.insert(cheap)
         
-        // Add the recipes to the model context
-        modelContext.insert(Recipe.pancakes)
+        // MARK: - Cookies
         modelContext.insert(Recipe.cookies)
+        
+        // Create and insert ingredients for cookies
+        let cookieIngredients = Recipe.createCookieIngredients(recipe: Recipe.cookies)
+        for ingredient in cookieIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.cookies.ingredients = cookieIngredients
+        
+        // Create and insert instructions for cookies
+        let cookieInstructions = Recipe.createCookieInstructions(recipe: Recipe.cookies)
+        for instruction in cookieInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.cookies.instructions = cookieInstructions
+
+        // Assign Categories
+        Recipe.cookies.categories = [desserts, comfortFood]
+        desserts.recipes.append(Recipe.cookies)
+        comfortFood.recipes.append(Recipe.cookies)
+        
+        // MARK: - Pancakes
+        modelContext.insert(Recipe.pancakes)
         
         // Create and insert ingredients for pancakes
         let pancakeIngredients = Recipe.createPancakeIngredients(recipe: Recipe.pancakes)
@@ -39,27 +72,28 @@ extension Category {
         }
         Recipe.pancakes.instructions = pancakeInstructions
         
-        // Create and insert ingredients for cookies
-        let cookieIngredients = Recipe.createCookieIngredients(recipe: Recipe.cookies)
-        for ingredient in cookieIngredients {
-            modelContext.insert(ingredient)
-        }
-        Recipe.cookies.ingredients = cookieIngredients
-        
-        // Create and insert instructions for cookies
-        let cookieInstructions = Recipe.createCookieInstructions(recipe: Recipe.cookies)
-        for instruction in cookieInstructions {
-            modelContext.insert(instruction)
-        }
-        Recipe.cookies.instructions = cookieInstructions
-        
-        // Set the categories for each recipe
+        // Assign Categories
         Recipe.pancakes.categories = [breakfast, quick]
         breakfast.recipes.append(Recipe.pancakes)
         quick.recipes.append(Recipe.pancakes)
         
-        Recipe.cookies.categories = [desserts, comfortFood]
-        desserts.recipes.append(Recipe.cookies)
-        comfortFood.recipes.append(Recipe.cookies)
+        // MARK: - College Chipotle Bowl
+        modelContext.insert(Recipe.collegeChipotleBowl)
+        
+        // Create and insert ingredients
+        let collegeChipotleBowlIngredients = Recipe.createCollegeChipBowlIngredients(recipe: Recipe.collegeChipotleBowl)
+        for ingredient in collegeChipotleBowlIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.collegeChipotleBowl.ingredients = collegeChipotleBowlIngredients
+        
+        // Create and insert instructions
+        let collegeChipotleBowlInstructions = Recipe.createCollegeChipBowlInstructions(recipe: Recipe.collegeChipotleBowl)
+        for instruction in collegeChipotleBowlInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.collegeChipotleBowl.instructions = collegeChipotleBowlInstructions
+        
+        Recipe.collegeChipotleBowl.categories = [cheap, dinner]
     }
 }

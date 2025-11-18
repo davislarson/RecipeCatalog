@@ -23,7 +23,7 @@ struct RecipeEditView: View {
     @State private var editableInstructions: [InstructionData]
     
     // New item forms
-    @State private var newIngredientQuantity: Int = 1
+    @State private var newIngredientQuantity: String = "1"
     @State private var newIngredientUnit: String = ""
     @State private var newIngredientName: String = ""
     @State private var newIngredientNotes: String = ""
@@ -33,7 +33,7 @@ struct RecipeEditView: View {
     struct IngredientData: Identifiable {
         let id = UUID()
         var order: Int
-        var quantity: Int
+        var quantity: String
         var unit: String
         var name: String
         var notes: String?
@@ -80,6 +80,8 @@ struct RecipeEditView: View {
         })
     }
         
+    @State private var editMode: EditMode = .inactive
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -155,7 +157,9 @@ struct RecipeEditView: View {
                                         .foregroundStyle(.secondary)
                                 }
                             }
+                            
                             Spacer()
+                            
                             Button(role: .destructive) {
                                 removeIngredient(ingredient)
                             } label: {
@@ -171,8 +175,7 @@ struct RecipeEditView: View {
                     // Add new ingredient
                     VStack(spacing: 8) {
                         HStack {
-                            TextField("Qty", value: $newIngredientQuantity, format: .number)
-                                .keyboardType(.numberPad)
+                            TextField("Qty", text: $newIngredientQuantity)
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 50)
                             
@@ -233,6 +236,7 @@ struct RecipeEditView: View {
                         .lineLimit(5...10)
                 }
             }
+            .environment(\.editMode, $editMode)
             .navigationTitle("Edit Recipe")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -242,11 +246,24 @@ struct RecipeEditView: View {
                     }
                 }
                 
+                ToolbarItem(placement: .topBarTrailing) {
+                    if editMode == .inactive {
+                        Button("Reorder") {
+                            editMode = .active
+                        }
+                    } else {
+                        Button("Done") {
+                            editMode = .inactive
+                        }
+                    }
+                }
+                
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         saveChanges()
                         dismiss()
                     }
+                    .disabled(editMode == .active)
                 }
             }
         }
@@ -332,7 +349,7 @@ struct RecipeEditView: View {
         editableIngredients.append(newIngredient)
         
         // Reset form
-        newIngredientQuantity = 1
+        newIngredientQuantity = "1"
         newIngredientUnit = ""
         newIngredientName = ""
         newIngredientNotes = ""
@@ -350,14 +367,14 @@ struct RecipeEditView: View {
     
     private func reorderIngredients() {
         for (index, _) in editableIngredients.enumerated() {
-            editableIngredients[index].order = index
+            editableIngredients[index].order = index + 1
         }
     }
     
     // MARK: - Instruction Methods
     private func addInstruction() {
         let newInstruction = InstructionData(
-            order: editableInstructions.count,
+            order: editableInstructions.count + 1,
             text: newInstructionText
         )
         
@@ -379,7 +396,7 @@ struct RecipeEditView: View {
     
     private func reorderInstructions() {
         for (index, _) in editableInstructions.enumerated() {
-            editableInstructions[index].order = index
+            editableInstructions[index].order = index + 1
         }
     }
 }

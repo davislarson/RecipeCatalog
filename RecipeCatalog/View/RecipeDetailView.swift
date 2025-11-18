@@ -9,9 +9,9 @@ struct RecipeDetailView: View {
     var body: some View {
         if recipe == nil {
             ContentUnavailableView(
-                "No recipe chosen",
+                "No recipe selected",
                 systemImage: "fork.knife",
-                description: Text("Select a recipe.")
+                description: Text("Select a recipe from the category section.")
             )
         } else if let recipe = recipe {
             ScrollView {
@@ -130,7 +130,7 @@ struct RecipeDetailView: View {
                                             .fill(Color.blue.opacity(0.1))
                                             .frame(width: 32, height: 32)
                                         
-                                        Text("\(instruction.order + 1)")
+                                        Text("\(instruction.order)")
                                             .font(.headline)
                                             .foregroundStyle(.blue)
                                     }
@@ -184,9 +184,9 @@ struct RecipeDetailView: View {
     let category1 = Category(name: "Desserts", recipes: [])
     let category2 = Category(name: "Quick", recipes: [])
     
-    let ingredient1 = Ingredient(order: 1, quantity: 2, unit: "cups", name: "all-purpose flour", notes: nil)
-    let ingredient2 = Ingredient(order: 2, quantity: 1, unit: "cup", name: "sugar", notes: nil)
-    let ingredient3 = Ingredient(order: 3, quantity: 3, unit: "large", name: "eggs", notes: "room temperature")
+    let ingredient1 = Ingredient(order: 1, quantity: "2", unit: "cups", name: "all-purpose flour", notes: nil)
+    let ingredient2 = Ingredient(order: 2, quantity: "1", unit: "cup", name: "sugar", notes: nil)
+    let ingredient3 = Ingredient(order: 3, quantity: "3", unit: "large", name: "eggs", notes: "room temperature")
     
     let instruction1 = Instruction(order: 1, text: "Preheat oven to 350°F (175°C). Grease and flour a 9-inch round cake pan.")
     let instruction2 = Instruction(order: 2, text: "In a large bowl, cream together butter and sugar until light and fluffy.")

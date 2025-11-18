@@ -37,7 +37,7 @@ struct EditIngredientView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Done") {
-                    ingredient.quantity = Int(quantity) ?? 1
+                    ingredient.quantity = String(quantity)
                     ingredient.unit = unit
                     ingredient.name = name
                     ingredient.notes = notes.isEmpty ? nil : notes

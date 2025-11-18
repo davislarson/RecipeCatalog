@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData // Allows ModelContainer to be found
 
 
-// In conjunciton with DataInitializer there were some additions to this file suggested by claude:
+// In conjunciton with getting the data into the app there were some additions to this file suggested by claude:
 // https://claude.ai/share/69dca26e-dbb1-48b7-a053-08f1284e8acf
 
 @main

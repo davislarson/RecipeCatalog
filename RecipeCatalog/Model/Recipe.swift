@@ -21,6 +21,7 @@ final class Recipe {
     var notes: String?
     
     // This is a many-to-many relationship
+    @Relationship(deleteRule: .nullify) // This is the default functionality but can be explicit.
     var categories: [Category]
     
     // Recipe to ingredient is one to many. When deleting a recipe all ingredients are deleted.

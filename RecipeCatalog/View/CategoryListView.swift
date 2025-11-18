@@ -17,6 +17,8 @@ struct CategoryListView: View {
             
             NavigationLink("All Recipes", value: "")
             
+            Divider()
+            
             ForEach(vm.categories) { category in
                 NavigationLink(category.name, value: category.name)
             }

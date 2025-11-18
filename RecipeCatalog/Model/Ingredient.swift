@@ -11,14 +11,14 @@ import SwiftData
 @Model
 final class Ingredient {
     var order: Int
-    var quantity: Int
+    var quantity: String
     var unit: String
     var name: String
     var notes: String?
     
     var recipe: Recipe?
     
-    init(order: Int, quantity: Int, unit: String, name: String, notes: String? = nil, recipe: Recipe? = nil) {
+    init(order: Int, quantity: String, unit: String, name: String, notes: String? = nil, recipe: Recipe? = nil) {
         self.order = order
         self.quantity = quantity
         self.unit = unit
