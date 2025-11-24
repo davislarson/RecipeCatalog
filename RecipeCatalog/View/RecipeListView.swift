@@ -61,12 +61,10 @@ struct RecipeListView: View {
             }
         }
         .onAppear {
-            print("RecipeListView appeared with category: \(recipeCategoryName ?? "nil")")
             vm.fetchRecipes(for: recipeCategoryName)
         }
         //- refetch when category changes
         .onChange(of: recipeCategoryName) { oldValue, newValue in
-            print("Category changed from \(oldValue ?? "nil") to \(newValue ?? "nil")")
             vm.fetchRecipes(for: newValue)
         }
     }

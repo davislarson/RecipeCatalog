@@ -1,3 +1,9 @@
+//  EditRecipeView.swift
+//  RecipeCatalog
+//
+//  Created by Davis Larson on 11/9/25.
+//
+
 import SwiftUI
 import SwiftData
 
@@ -19,8 +25,8 @@ struct RecipeEditView: View {
     @State private var isFavorite: Bool
     @State private var notes: String
     @State private var selectedCategories: [Category]
-    @State private var editableIngredients: [IngredientData]
-    @State private var editableInstructions: [InstructionData]
+    @State private var editableIngredients: [Ingredient]
+    @State private var editableInstructions: [Instruction]
     
     // New item forms
     @State private var newIngredientQuantity: String = "1"
@@ -29,21 +35,6 @@ struct RecipeEditView: View {
     @State private var newIngredientNotes: String = ""
     @State private var newInstructionText: String = ""
     
-    // Temporary data structures for editing
-    struct IngredientData: Identifiable {
-        let id = UUID()
-        var order: Int
-        var quantity: String
-        var unit: String
-        var name: String
-        var notes: String?
-    }
-    
-    struct InstructionData: Identifiable {
-        let id = UUID()
-        var order: Int
-        var text: String
-    }
     
     init(recipe: Recipe) {
         self.recipe = recipe
@@ -62,7 +53,7 @@ struct RecipeEditView: View {
         
         // Convert ingredients to editable data
         _editableIngredients = State(initialValue: recipe.ingredients.sorted(by: { $0.order < $1.order }).map { ingredient in
-            IngredientData(
+            Ingredient(
                 order: ingredient.order,
                 quantity: ingredient.quantity,
                 unit: ingredient.unit,
@@ -71,9 +62,9 @@ struct RecipeEditView: View {
             )
         })
         
-        // Convert instructions to editable data (THIS WAS MISSING!)
+        // Convert instructions to editable data
         _editableInstructions = State(initialValue: recipe.instructions.sorted(by: { $0.order < $1.order }).map { instruction in
-            InstructionData(
+            Instruction(
                 order: instruction.order,
                 text: instruction.text
             )
@@ -145,37 +136,34 @@ struct RecipeEditView: View {
                 
                 // MARK: - Ingredients
                 Section("Ingredients") {
-                    ForEach(editableIngredients) { ingredient in
-                        HStack {
-                            Text("\(ingredient.order).")
-                                .foregroundStyle(.secondary)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(ingredient.quantity) \(ingredient.unit) \(ingredient.name)")
-                                if let notes = ingredient.notes, !notes.isEmpty {
-                                    Text(notes)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
+                    ForEach($editableIngredients) { $ingredient in
+                        NavigationLink {
+                            EditIngredientView(ingredient: ingredient)
+                        } label: {
+                            HStack {
+                                Text("\(ingredient.order).")
+                                    .foregroundStyle(.secondary)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("\(ingredient.quantity) \(ingredient.unit) \(ingredient.name)")
+                                    if let notes = ingredient.notes, !notes.isEmpty {
+                                        Text(notes)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
-                            }
-                            
-                            Spacer()
-                            
-                            Button(role: .destructive) {
-                                removeIngredient(ingredient)
-                            } label: {
-                                Image(systemName: "trash")
-                                    .foregroundStyle(.red)
                             }
                         }
                     }
+                    .onDelete(perform: deleteIngredients)
                     .onMove { from, to in
                         moveIngredients(from: from, to: to)
                     }
-                    
                     // Add new ingredient
                     VStack(spacing: 8) {
                         HStack {
                             TextField("Qty", text: $newIngredientQuantity)
+                                .keyboardType(.numberPad)
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 50)
                             
@@ -199,20 +187,18 @@ struct RecipeEditView: View {
                 
                 // MARK: - Instructions
                 Section("Instructions") {
-                    ForEach(editableInstructions) { instruction in
-                        HStack(alignment: .top) {
-                            Text("\(instruction.order).")
-                                .foregroundStyle(.secondary)
-                            Text(instruction.text)
-                            Spacer()
-                            Button(role: .destructive) {
-                                removeInstruction(instruction)
-                            } label: {
-                                Image(systemName: "trash")
-                                    .foregroundStyle(.red)
+                    ForEach($editableInstructions) { $instruction in
+                        NavigationLink {
+                            EditInstructionView(instruction: instruction)
+                        } label: {
+                            HStack(alignment: .top) {
+                                Text("\(instruction.order).")
+                                    .foregroundStyle(.secondary)
+                                Text(instruction.text)
                             }
                         }
                     }
+                    .onDelete(perform: deleteInstructions)
                     .onMove { from, to in
                         moveInstructions(from: from, to: to)
                     }
@@ -271,60 +257,28 @@ struct RecipeEditView: View {
     
     // MARK: - Helper Properties
     private var availableCategories: [Category] {
-        vm.allCategories.filter { category in
-            !selectedCategories.contains(where: { $0.name == category.name })
-        }
+        vm.getAvailableCategories(excluding: selectedCategories)
     }
+    
+    // NOTE: All the following properties are so that you can make editing choices but not make them permanent until it is confirmed by pressing "done".
     
     // MARK: - Save Changes
     private func saveChanges() {
-        // Update basic properties
-        recipe.title = title
-        recipe.creator = creator
-        recipe.dateCreated = dateCreated
-        recipe.prepTime = prepTime
-        recipe.serves = serves
-        recipe.difficulty = difficulty
-        recipe.caloriesPerServing = caloriesPerServing
-        recipe.isFavorite = isFavorite
-        recipe.notes = notes.isEmpty ? nil : notes
-        
-        // Update categories
-        recipe.categories = selectedCategories
-        
-        // Delete all old ingredients using ViewModel
-        vm.deleteAllIngredients(from: recipe)
-        
-        // Create new ingredients from editable data
-        for ingredientData in editableIngredients {
-            let newIngredient = Ingredient(
-                order: ingredientData.order,
-                quantity: ingredientData.quantity,
-                unit: ingredientData.unit,
-                name: ingredientData.name,
-                notes: ingredientData.notes,
-                recipe: recipe
-            )
-            recipe.ingredients.append(newIngredient)
-            vm.insertIngredient(newIngredient)
-        }
-        
-        // Delete all old instructions using ViewModel
-        vm.deleteAllInstructions(from: recipe)
-        
-        // Create new instructions from editable data
-        for instructionData in editableInstructions {
-            let newInstruction = Instruction(
-                order: instructionData.order,
-                text: instructionData.text,
-                recipe: recipe
-            )
-            recipe.instructions.append(newInstruction)
-            vm.insertInstruction(newInstruction)
-        }
-        
-        // Save all changes through ViewModel
-        vm.saveChanges()
+        vm.updateRecipe(
+            recipe,
+            title: title,
+            creator: creator,
+            dateCreated: dateCreated,
+            prepTime: prepTime,
+            serves: serves,
+            difficulty: difficulty,
+            caloriesPerServing: caloriesPerServing,
+            isFavorite: isFavorite,
+            notes: notes.isEmpty ? nil : notes,
+            categories: selectedCategories,
+            ingredients: editableIngredients,
+            instructions: editableInstructions
+        )
     }
     
     // MARK: - Category Methods
@@ -338,9 +292,9 @@ struct RecipeEditView: View {
     
     // MARK: - Ingredient Methods
     private func addIngredient() {
-        let newIngredient = IngredientData(
-            order: editableIngredients.count,
-            quantity: newIngredientQuantity,
+        let newIngredient = Ingredient(
+            order: editableIngredients.count + 1,
+            quantity: String(newIngredientQuantity),
             unit: newIngredientUnit,
             name: newIngredientName,
             notes: newIngredientNotes.isEmpty ? nil : newIngredientNotes
@@ -355,8 +309,8 @@ struct RecipeEditView: View {
         newIngredientNotes = ""
     }
     
-    private func removeIngredient(_ ingredient: IngredientData) {
-        editableIngredients.removeAll { $0.id == ingredient.id }
+    private func deleteIngredients(at offsets: IndexSet) {
+        editableIngredients.remove(atOffsets: offsets)
         reorderIngredients()
     }
     
@@ -373,7 +327,7 @@ struct RecipeEditView: View {
     
     // MARK: - Instruction Methods
     private func addInstruction() {
-        let newInstruction = InstructionData(
+        let newInstruction = Instruction(
             order: editableInstructions.count + 1,
             text: newInstructionText
         )
@@ -384,8 +338,8 @@ struct RecipeEditView: View {
         newInstructionText = ""
     }
     
-    private func removeInstruction(_ instruction: InstructionData) {
-        editableInstructions.removeAll { $0.id == instruction.id }
+    private func deleteInstructions(at offsets: IndexSet) {
+        editableInstructions.remove(atOffsets: offsets)
         reorderInstructions()
     }
     

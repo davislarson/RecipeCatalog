@@ -14,11 +14,7 @@ final class ViewModel: ContextReferencing {
     
     // MARK: - Properties
     private var modelContext: ModelContext
-    
-    var allRecipes: [Recipe]  {
-        (try? modelContext.fetch(FetchDescriptor())) ?? []
-    }
-    
+        
     var categories: [Category] = []
     
     var recipes: [Recipe] = []
@@ -39,7 +35,6 @@ final class ViewModel: ContextReferencing {
     // MARK: Initialization
     
     required init(modelContext: ModelContext) {
-        print("⚠️ ViewModel INIT called - this should only happen ONCE per view")
         self.modelContext = modelContext
         fetchCategories()
     }
@@ -88,9 +83,17 @@ final class ViewModel: ContextReferencing {
     // MARK: - Model Access
     
     var allCategories: [Category] {
-        (try? modelContext.fetch(FetchDescriptor<Category>())) ?? []
+        let descriptor = FetchDescriptor<Category>(sortBy: [SortDescriptor(\.name)])
+        
+        return (try? modelContext.fetch(descriptor)) ?? []
     }
     
+    var allRecipes: [Recipe]  {
+        let descriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
+        
+        return (try? modelContext.fetch(descriptor)) ?? []
+    }
+  
     // MARK: - User Intents
     
     func addRecipe() {
@@ -154,6 +157,82 @@ final class ViewModel: ContextReferencing {
     func saveChanges() {
         try? modelContext.save()
     }
+
+    func updateRecipe(
+        _ recipe: Recipe,
+        title: String,
+        creator: String,
+        dateCreated: Date,
+        prepTime: Int,
+        serves: Int,
+        difficulty: DifficultyLevel,
+        caloriesPerServing: Int?,
+        isFavorite: Bool,
+        notes: String?,
+        categories: [Category],
+        ingredients: [Ingredient],
+        instructions: [Instruction]
+    ) {
+        // Update basic properties
+        recipe.title = title
+        recipe.creator = creator
+        recipe.dateCreated = dateCreated
+        recipe.prepTime = prepTime
+        recipe.serves = serves
+        recipe.difficulty = difficulty
+        recipe.caloriesPerServing = caloriesPerServing
+        recipe.isFavorite = isFavorite
+        recipe.notes = notes
+        recipe.categories = categories
+        
+        // Handle ingredients
+        deleteAllIngredients(from: recipe)
+        for ingredientData in ingredients {
+            let newIngredient = Ingredient(
+                order: ingredientData.order,
+                quantity: ingredientData.quantity,
+                unit: ingredientData.unit,
+                name: ingredientData.name,
+                notes: ingredientData.notes,
+                recipe: recipe
+            )
+            recipe.ingredients.append(newIngredient)
+            insertIngredient(newIngredient)
+        }
+        
+        // Handle instructions
+        deleteAllInstructions(from: recipe)
+        for instructionData in instructions {
+            let newInstruction = Instruction(
+                order: instructionData.order,
+                text: instructionData.text,
+                recipe: recipe
+            )
+            recipe.instructions.append(newInstruction)
+            insertInstruction(newInstruction)
+        }
+        
+        saveChanges()
+    }
+
+    func addCategoryToRecipe(_ category: Category, recipe: Recipe) {
+        if !recipe.categories.contains(where: { $0.name == category.name }) {
+            recipe.categories.append(category)
+            saveChanges()
+        }
+    }
+
+    func removeCategoryFromRecipe(_ category: Category, recipe: Recipe) {
+        recipe.categories.removeAll { $0.name == category.name }
+        saveChanges()
+    }
+
+    func getAvailableCategories(excluding selected: [Category]) -> [Category] {
+        allCategories.filter { category in
+            !selected.contains(where: { $0.name == category.name })
+        }
+    }
+    
     
     // MARK: - Context referencing
     func update() {
