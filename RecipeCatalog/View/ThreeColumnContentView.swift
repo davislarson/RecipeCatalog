@@ -16,7 +16,7 @@ struct ThreeColumnContentView: View {
             CategoryListView()
                 .navigationTitle(vm.sideBarTitle)
         } content: {
-            RecipeListView(recipeCategoryName: vm.selectedCategoryName)
+            RecipeListView(recipeFilter: vm.selectedFilter)
                 .navigationTitle(vm.contentListTitle)
         } detail: {
             NavigationStack{

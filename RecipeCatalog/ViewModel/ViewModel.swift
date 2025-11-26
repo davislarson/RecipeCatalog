@@ -22,14 +22,27 @@ final class ViewModel: ContextReferencing {
     
     // MARK: - Navigation properties
     
-    var selectedCategoryName: String? = nil
+    var selectedFilter: RecipeFilter? = nil
     var selectedRecipe: Recipe? = nil
     var columnVisibility: NavigationSplitViewVisibility = .all
     
     var sideBarTitle = "Categories"
     
     var contentListTitle: String {
-       selectedCategoryName ?? "Recipes"
+        guard let filter = selectedFilter else {
+            return "Select A Category"
+        }
+        
+        switch filter {
+        case .all:
+            return "All Recipes"
+        case .category(let name):
+            return name
+        case .favorites:
+            return "Favorites"
+        case .search(let term):
+            return "Search: \(term)"
+        }
     }
     
     // MARK: Initialization
@@ -43,25 +56,47 @@ final class ViewModel: ContextReferencing {
     
     // This gives the UI the data that is already initialized from the presets
     
-    func fetchRecipes(for categoryName: String? = nil) {
-        var descriptor: FetchDescriptor<Recipe>
+    func fetchRecipes(for filter: RecipeFilter = .all) {
+        let descriptor: FetchDescriptor<Recipe>
         
-        if let categoryName = categoryName {
-            print(categoryName)
+        
+        switch filter {
+        case .all:
+            descriptor = FetchDescriptor<Recipe>(
+                sortBy: [SortDescriptor(\.title)]
+            )
+        case .category(let categoryName):
+            // Fetch all recipes with this category
             descriptor = FetchDescriptor<Recipe>(
                 predicate: #Predicate<Recipe> { recipe in
-                    recipe.categories.contains(where: { $0.name == categoryName }) 
+                    recipe.categories.contains(where: { $0.name == categoryName })
                 },
-                sortBy: [SortDescriptor(\.title)])
-        } else {
-            // This will fetch all recipes if no category is set
-            descriptor = FetchDescriptor<Recipe> (
-                predicate: #Predicate<Recipe> { _ in true },
+                sortBy: [SortDescriptor(\.title)]
+            )
+            
+        case .favorites:
+            descriptor = FetchDescriptor<Recipe>(
+                predicate: #Predicate<Recipe> { recipe in
+                    recipe.isFavorite == true
+                },
+                sortBy: [SortDescriptor(\.title)]
+            )
+            
+        case .search(let searchTerm):
+            let lowercasedTerm = searchTerm.lowercased()
+            descriptor = FetchDescriptor<Recipe>(
+                predicate: #Predicate<Recipe> { recipe in
+                    // Only searching on title, creator, and notes currently
+                    recipe.title.localizedStandardContains(lowercasedTerm) ||
+                    recipe.creator.localizedStandardContains(lowercasedTerm) ||
+                    (recipe.notes?.localizedStandardContains(lowercasedTerm) ?? false)
+                },
                 sortBy: [SortDescriptor(\.title)]
             )
         }
+        
         do {
-            recipes = (try modelContext.fetch(descriptor))
+            recipes = try modelContext.fetch(descriptor)
         } catch {
             print("Error fetching recipes: \(error)")
             recipes = []
@@ -96,12 +131,39 @@ final class ViewModel: ContextReferencing {
   
     // MARK: - User Intents
     
-    func addRecipe() {
-        
-    }
+    func addRecipe(title: String, creator: String, dateCreated: Date,
+                    prepTime: Int, serves: Int, difficulty: DifficultyLevel,
+                    caloriesPerServing: Int?, isFavorite: Bool, notes: String?,
+                    categories: [Category], ingredients: [Ingredient],
+                    instructions: [Instruction]) {
+      let recipe = Recipe(
+          title: title,
+          creator: creator,
+          dateCreated: dateCreated,
+          prepTime: prepTime,
+          serves: serves,
+          difficulty: difficulty,
+          caloriesPerServing: caloriesPerServing,
+          isFavorite: isFavorite,
+          notes: notes,
+          categories: categories,
+          ingredients: ingredients,
+          instructions: instructions
+      )
+      modelContext.insert(recipe)
+  }
     
     func deleteRecipes(offsets: IndexSet) {
+        for index in offsets {
+            let recipe = recipes[index]
+            modelContext.delete(recipe)
+        }
+        saveChanges()
         
+        // Run the filter again.
+        if let filter = selectedFilter {
+            fetchRecipes(for: filter)
+        }
     }
     
     func addCategory() {
@@ -115,9 +177,9 @@ final class ViewModel: ContextReferencing {
         for index in offsets {
             let category = categories[index]
             // Remove category from all recipes
-            for recipe in category.recipes {
-                recipe.categories.removeAll(where: { $0.name == category.name })
-            }
+//            for recipe in category.recipes {
+//                recipe.categories.removeAll(where: { $0.name == category.name })
+//            }
             modelContext.delete(category)
         }
         saveChanges()
@@ -239,4 +301,11 @@ final class ViewModel: ContextReferencing {
         fetchCategories()
     }
     
+}
+
+enum RecipeFilter: Equatable, Hashable {
+    case all
+    case category(String)
+    case favorites
+    case search(String)
 }

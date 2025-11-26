@@ -8,32 +8,31 @@
 import SwiftUI
 
 struct RecipeListView: View {
-    let recipeCategoryName: String?
+    let recipeFilter: RecipeFilter?
     
     @Environment(ViewModel.self) private var vm
     @State private var showAddRecipeSheet: Bool = false
-    
-    init(recipeCategoryName: String?) {
-        self.recipeCategoryName = recipeCategoryName
-    }
-    
+    @State private var searchText: String = ""
     
     var body: some View {
         @Bindable var vm = vm
         
-        // Claude taught me how to use this group to apply multiple view modifiers to an empty state or list state
         Group {
-            if let recipeCategoryName {
+            if let filter = recipeFilter {
+                TextField("Search recipes...", text: $searchText)
+                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                    .onChange(of: searchText) { oldValue, newValue in
+                        if !newValue.isEmpty {
+                            vm.fetchRecipes(for: .search(newValue))
+                        } else {
+                            vm.fetchRecipes(for: filter)
+                        }
+                    }
                 if vm.recipes.isEmpty {
-                    ContentUnavailableView(
-                        "No Recipes in \(recipeCategoryName)",
-                        systemImage: "fork.knife",
-                        description: Text("Add a recipe to get started.")
-                    )
+                    Text("No recipes found.")
                 } else {
                     VStack {
-                        TextField("Search", text: .constant(""))
-                            .padding()
                         List(selection: $vm.selectedRecipe) {
                             ForEach(vm.recipes) { recipe in
                                 NavigationLink(recipe.title, value: recipe)
@@ -46,7 +45,7 @@ struct RecipeListView: View {
                 ContentUnavailableView(
                     "Select a Category",
                     systemImage: "list.bullet",
-                    description: Text("Choose a category from the sidebar to view its recipes.")
+                    description: Text("Choose a category from the sidebar to view recipes.")
                 )
             }
         }
@@ -63,11 +62,14 @@ struct RecipeListView: View {
             }
         }
         .onAppear {
-            vm.fetchRecipes(for: recipeCategoryName)
+            if let filter = recipeFilter {
+                vm.fetchRecipes(for: filter)
+            }
         }
-        //- refetch when category changes
-        .onChange(of: recipeCategoryName) { oldValue, newValue in
-            vm.fetchRecipes(for: newValue)
+        .onChange(of: recipeFilter) { oldValue, newValue in
+            if searchText.isEmpty, let filter = newValue {
+                vm.fetchRecipes(for: filter)
+            }
         }
         .sheet(isPresented: $showAddRecipeSheet) {
             CreateRecipeView()
@@ -76,5 +78,5 @@ struct RecipeListView: View {
 }
 
 #Preview {
-    RecipeListView(recipeCategoryName: "Desserts")
+    RecipeListView(recipeFilter: RecipeFilter.category("Desserts"))
 }

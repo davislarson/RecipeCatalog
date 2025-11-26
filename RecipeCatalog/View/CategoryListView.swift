@@ -13,16 +13,20 @@ struct CategoryListView: View {
     var body: some View {
         @Bindable var vm = vm
         
-        List(selection: $vm.selectedCategoryName) {
-            
-            NavigationLink("All Recipes", value: "")
-            
-            Divider()
-            
-            ForEach(vm.categories) { category in
-                NavigationLink(category.name, value: category.name)
+        List(selection: $vm.selectedFilter) {
+            // All recipes section
+            Section {
+                NavigationLink("All Recipes", value: RecipeFilter.all)
+                NavigationLink("Favorites", value: RecipeFilter.favorites)
             }
-            .onDelete(perform: vm.deleteCategories)
+            
+            // Categories section
+            Section("Categories") {
+                ForEach(vm.categories) { category in
+                    NavigationLink(category.name, value: RecipeFilter.category(category.name))
+                }
+                .onDelete(perform: vm.deleteCategories)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

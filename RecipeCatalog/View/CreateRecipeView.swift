@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CreateRecipeView: View {
     @Environment(ViewModel.self) private var vm
@@ -40,19 +41,19 @@ struct CreateRecipeView: View {
             Form {
                 Section("Basic Information") {
                     HStack {
-                        Text("Title")
+                        Text("Title:").bold()
                         TextField(text: $title, prompt: Text("Required")) {
                             Text("")
                         }
                     }
                     HStack {
-                        Text("Creator")
+                        Text("Creator:").bold()
                         TextField(text: $creator, prompt: Text("Required")) {
                             Text("")
                         }
                     }
                     DatePicker(selection: $dateCreated, displayedComponents: .date) {
-                        Text("Date Created")
+                        Text("Date Created:").bold()
                     }
                 }
                 Section("Recipe Details") {
@@ -127,7 +128,7 @@ struct CreateRecipeView: View {
                         moveIngredients(from: from, to: to)
                     }
                     
-                    VStack {
+                    VStack(spacing: 8) {
                         HStack {
                             TextField("Qty", text: $newIngredientQuantity)
                                 .keyboardType(.decimalPad)
@@ -139,7 +140,7 @@ struct CreateRecipeView: View {
                                 .frame(width: 70)
                                 .textInputAutocapitalization(.never)
                             
-                            TextField("Ingrident", text: $newIngredientName)
+                            TextField("Ingredient", text: $newIngredientName)
                                 .textFieldStyle(.roundedBorder)
                         }
                         TextField("Notes (optional)", text: $newIngredientNotes)
@@ -148,7 +149,7 @@ struct CreateRecipeView: View {
                         Button(action: addIngredient) {
                             Label("Add Ingredient", systemImage: "plus.circle.fill")
                         }
-                        .disabled(newIngredientName.isEmpty || newIngredientUnit.isEmpty)
+                        .disabled(newIngredientName.isEmpty || newIngredientUnit.isEmpty || newIngredientQuantity.isEmpty)
                     }
                 }
                 Section("Instructions") {
@@ -168,7 +169,7 @@ struct CreateRecipeView: View {
                         moveInstructions(from: from, to: to)
                     }
                     
-                    VStack {
+                    VStack(spacing: 8) {
                         TextField("New instruction", text: $newInstructionText, axis: .vertical)
                             .textFieldStyle(.roundedBorder)
                             .lineLimit(3...6)
@@ -184,43 +185,63 @@ struct CreateRecipeView: View {
                         .lineLimit(5...10)
                 }
             }
-        }
-        .navigationTitle("Create a Recipe")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
-                }
-            }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                if editMode == .inactive {
-                    Button("Reorder") {
-                        editMode = .active
-                    }
-                } else {
-                    Button("Done") {
-                        editMode = .inactive
+            .environment(\.editMode, $editMode)
+            .navigationTitle("Create a Recipe")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
                     }
                 }
-            }
-            
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Create") {
-                    // Create the recipe here.
-                    dismiss()
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    if editMode == .inactive {
+                        Button("Reorder") {
+                            editMode = .active
+                        }
+                    } else {
+                        Button("Done") {
+                            editMode = .inactive
+                        }
+                    }
                 }
-                .disabled(title.isEmpty || creator.isEmpty || editMode == .active)
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Create") {
+                        addRecipe()
+                        dismiss()
+                    }
+                    .disabled(title.isEmpty || creator.isEmpty || editMode == .active)
+                }
             }
-            
         }
     }
     
+    // MARK: - Helper Properties
     private var availableCategories: [Category] {
         vm.getAvailableCategories(excluding: selectedCategories)
     }
     
+    // MARK: - Create Recipe
+    private func addRecipe() {
+        vm.addRecipe(
+            title: title,
+            creator: creator,
+            dateCreated: dateCreated,
+            prepTime: prepTime,
+            serves: serves,
+            difficulty: difficulty,
+            caloriesPerServing: caloriesPerServing,
+            isFavorite: isFavorite,
+            notes: notes.isEmpty ? nil : notes,
+            categories: selectedCategories,
+            ingredients: ingredients,
+            instructions: instructions
+        )
+    }
+    
+    // MARK: - Category Methods
     private func addCategory(_ category: Category) {
         selectedCategories.append(category)
     }
@@ -233,7 +254,7 @@ struct CreateRecipeView: View {
     private func addIngredient() {
         let newIngredient = Ingredient(
             order: ingredients.count + 1,
-            quantity: String(newIngredientQuantity),
+            quantity: newIngredientQuantity,
             unit: newIngredientUnit,
             name: newIngredientName,
             notes: newIngredientNotes.isEmpty ? nil : newIngredientNotes
@@ -265,35 +286,34 @@ struct CreateRecipeView: View {
     }
     
     // MARK: - Instruction Methods
-        private func addInstruction() {
-            let newInstruction = Instruction(
-                order: instructions.count + 1,
-                text: newInstructionText
-            )
-            
-            instructions.append(newInstruction)
-            
-            // Reset form
-            newInstructionText = ""
-        }
+    private func addInstruction() {
+        let newInstruction = Instruction(
+            order: instructions.count + 1,
+            text: newInstructionText
+        )
         
-        private func deleteInstructions(at offsets: IndexSet) {
-            instructions.remove(atOffsets: offsets)
-            reorderInstructions()
-        }
+        instructions.append(newInstruction)
         
-        private func moveInstructions(from source: IndexSet, to destination: Int) {
-            instructions.move(fromOffsets: source, toOffset: destination)
-            reorderInstructions()
+        // Reset form
+        newInstructionText = ""
+    }
+    
+    private func deleteInstructions(at offsets: IndexSet) {
+        instructions.remove(atOffsets: offsets)
+        reorderInstructions()
+    }
+    
+    private func moveInstructions(from source: IndexSet, to destination: Int) {
+        instructions.move(fromOffsets: source, toOffset: destination)
+        reorderInstructions()
+    }
+    
+    private func reorderInstructions() {
+        for (index, _) in instructions.enumerated() {
+            instructions[index].order = index + 1
         }
-        
-        private func reorderInstructions() {
-            for (index, _) in instructions.enumerated() {
-                instructions[index].order = index + 1
-            }
-        }
+    }
 }
-
 
 #Preview {
     CreateRecipeView()
