@@ -26,11 +26,19 @@ struct EditIngredientView: View {
     
     var body: some View {
         Form {
-            TextField("Quantity", text: $quantity)
+            TextField(text: $quantity) {
+                Text("Quantity")
+            }
                 .keyboardType(.numberPad)
-            TextField("Unit (e.g., cups, tsp, oz)", text: $unit)
-            TextField("Ingredient Name", text: $name)
-            TextField("Notes (optional)", text: $notes)
+            TextField(text: $unit, prompt: Text("e.g., cups, tsp, oz")) {
+                Text("Unit")
+            }
+            TextField(text: $name) {
+                Text("Ingredient Name")
+            }
+            TextField(text: $notes, prompt: Text("Optional")) {
+                Text("Notes")
+            }
         }
         .navigationTitle("Edit Ingredient")
         .navigationBarTitleDisplayMode(.inline)

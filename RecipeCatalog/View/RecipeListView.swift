@@ -11,6 +11,7 @@ struct RecipeListView: View {
     let recipeCategoryName: String?
     
     @Environment(ViewModel.self) private var vm
+    @State private var showAddRecipeSheet: Bool = false
     
     init(recipeCategoryName: String?) {
         self.recipeCategoryName = recipeCategoryName
@@ -54,10 +55,11 @@ struct RecipeListView: View {
                 EditButton()
             }
             ToolbarItem(placement: .primaryAction) {
-                Button(action: vm.addRecipe) {
+                Button {
+                    showAddRecipeSheet = true
+                } label: {
                     Label("Add Item", systemImage: "plus")
                 }
-
             }
         }
         .onAppear {
@@ -66,6 +68,9 @@ struct RecipeListView: View {
         //- refetch when category changes
         .onChange(of: recipeCategoryName) { oldValue, newValue in
             vm.fetchRecipes(for: newValue)
+        }
+        .sheet(isPresented: $showAddRecipeSheet) {
+            CreateRecipeView()
         }
     }
 }
