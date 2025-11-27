@@ -1,8 +1,17 @@
+//
+//  RecipeDetailView.swift
+//  RecipeCatalog
+//
+//  Created by Davis Larson on 11/9/25.
+//
+
 import SwiftUI
 
 struct RecipeDetailView: View {
+    @Environment(ViewModel.self) private var vm
     @Environment(\.editMode) private var editMode
     @State private var showingEditSheet = false
+    @State private var showDeleteAlert = false
     
     var recipe: Recipe?
     
@@ -166,6 +175,13 @@ struct RecipeDetailView: View {
             .navigationTitle(recipe.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .destructiveAction) {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {
                         showingEditSheet = true
@@ -175,7 +191,27 @@ struct RecipeDetailView: View {
             .sheet(isPresented: $showingEditSheet) {
                 RecipeEditView(recipe: recipe)
             }
+            .alert("Delete Recipe?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    deleteRecipe(recipe)
+                }
+            } message: {
+                Text("Are you sure you want to permanently delete \"\(recipe.title)\"? This action cannot be undone.")
+            }
         }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func deleteRecipe(_ recipe: Recipe) {
+        // Find the recipe's index in the current list
+        if let index = vm.recipes.firstIndex(where: { $0.id == recipe.id }) {
+            vm.deleteRecipes(offsets: IndexSet(integer: index))
+        }
+        
+        // Clear the selection so the detail view updates
+        vm.selectedRecipe = nil
     }
 }
 

@@ -26,7 +26,7 @@ final class ViewModel: ContextReferencing {
     var selectedRecipe: Recipe? = nil
     var columnVisibility: NavigationSplitViewVisibility = .all
     
-    var sideBarTitle = "Categories"
+    var sideBarTitle = "Recipe Catalog"
     
     var contentListTitle: String {
         guard let filter = selectedFilter else {
@@ -166,20 +166,74 @@ final class ViewModel: ContextReferencing {
         }
     }
     
-    func addCategory() {
-        let newCategory = Category(name: "New Category", recipes: [])
-            modelContext.insert(newCategory)
-            saveChanges()
-            fetchCategories()
+    func removeRecipeFromCategory(_ recipe: Recipe, categoryName: String) {
+        // Find the category
+        guard let category = categories.first(where: { $0.name == categoryName }) else {
+            return
         }
         
+        // Remove the recipe from the category
+        recipe.removeCategory(category)
+        
+        saveChanges()
+        
+        // Refresh the recipe list for the current filter
+        if let filter = selectedFilter {
+            fetchRecipes(for: filter)
+        }
+    }
+    
+    func createCategory(name: String, recipes: [Recipe]) {
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmedName.isEmpty else { return }
+        
+        let newCategory = Category(name: trimmedName, recipes: [])
+        modelContext.insert(newCategory)
+        
+        // Add selected recipes to the new category
+        for recipe in recipes {
+            recipe.addCategory(newCategory)
+        }
+        
+        saveChanges()
+        fetchCategories()
+    }
+
+    func updateCategory(_ category: Category, name: String, recipes: [Recipe]) {
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmedName.isEmpty else { return }
+        
+        // Update category name
+        category.name = trimmedName
+        
+        // Update recipe associations
+        let currentRecipes = Set(category.recipes)
+        let newRecipes = Set(recipes)
+        
+        // Remove recipes that were deselected
+        let recipesToRemove = currentRecipes.subtracting(newRecipes)
+        for recipe in recipesToRemove {
+            recipe.removeCategory(category)
+        }
+        
+        // Add newly selected recipes
+        let recipesToAdd = newRecipes.subtracting(currentRecipes)
+        for recipe in recipesToAdd {
+            recipe.addCategory(category)
+        }
+        
+        saveChanges()
+        fetchCategories()
+        
+        // Refresh the recipe list if viewing that category or just return all of the recipes
+        if case .category(let categoryName) = selectedFilter, categoryName == category.name {
+            fetchRecipes(for: selectedFilter ?? .all)
+        }
+    }
+    
     func deleteCategories(offsets: IndexSet) {
         for index in offsets {
             let category = categories[index]
-            // Remove category from all recipes
-//            for recipe in category.recipes {
-//                recipe.categories.removeAll(where: { $0.name == category.name })
-//            }
             modelContext.delete(category)
         }
         saveChanges()

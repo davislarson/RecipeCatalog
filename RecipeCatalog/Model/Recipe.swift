@@ -60,13 +60,11 @@ final class Recipe {
     func addCategory(_ category: Category) {
         if !categories.contains(where: { $0.name == category.name }) {
             categories.append(category)
-            category.recipes.append(self)
         }
     }
     
     func removeCategory(_ category: Category) {
         categories.removeAll(where: { $0.name == category.name })
-        category.recipes.removeAll(where: { $0.title == self.title })
     }
     
     // TODO

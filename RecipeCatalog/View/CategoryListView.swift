@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CategoryListView: View {
     @Environment(ViewModel.self) private var vm
+    @State private var categoryToEdit: Category?
+    @State private var showingAddCategory = false
     
     var body: some View {
         @Bindable var vm = vm
@@ -24,26 +26,36 @@ struct CategoryListView: View {
             Section("Categories") {
                 ForEach(vm.categories) { category in
                     NavigationLink(category.name, value: RecipeFilter.category(category.name))
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                categoryToEdit = category
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            .tint(.blue)
+                        }
                 }
                 .onDelete(perform: vm.deleteCategories)
             }
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: vm.addCategory) {
+                Button(action: { showingAddCategory = true }) {
                     Label("Add Category", systemImage: "plus")
                 }
             }
+        }
+        .sheet(item: $categoryToEdit) { category in
+            EditCategoryView(category: category)
+        }
+        .sheet(isPresented: $showingAddCategory) {
+            CreateCategoryView()
         }
         .onAppear {
             vm.fetchCategories()
         }
     }
 }
-
 #Preview {
     CategoryListView()
 }
