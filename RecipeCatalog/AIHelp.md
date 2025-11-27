@@ -290,4 +290,10 @@ if count == 1 {
     "one thing"
 } else {
     "many things"
-} 
+}
+
+## I asked AI to create an app Icon
+### Prompt
+can you create me an image for an iOS app icon. This is for a recipe app I want it to be simple. If you make it a cooking hat in the middle and make an image for both light and dark mode
+### response
+It gave me an image I had to edit it a little bit to seperate the light image from the dark one and get them to the right size for XCode

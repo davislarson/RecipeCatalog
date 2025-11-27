@@ -95,5 +95,28 @@ extension Category {
         Recipe.collegeChipotleBowl.instructions = collegeChipotleBowlInstructions
         
         Recipe.collegeChipotleBowl.categories = [cheap, dinner]
+        
+        // MARK: - Chicken Noodle Soup
+        modelContext.insert(Recipe.chickenNoodleSoup)
+
+        // Create and insert ingredients
+        let chickenSoupIngredients = Recipe.createChickenNoodleSoupIngredients(recipe: Recipe.chickenNoodleSoup)
+        for ingredient in chickenSoupIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.chickenNoodleSoup.ingredients = chickenSoupIngredients
+
+        // Create and insert instructions
+        let chickenSoupInstructions = Recipe.createChickenNoodleSoupInstructions(recipe: Recipe.chickenNoodleSoup)
+        for instruction in chickenSoupInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.chickenNoodleSoup.instructions = chickenSoupInstructions
+
+        // Assign Categories
+        Recipe.chickenNoodleSoup.categories = [soups, comfortFood, dinner]
+        soups.recipes.append(Recipe.chickenNoodleSoup)
+        comfortFood.recipes.append(Recipe.chickenNoodleSoup)
+        dinner.recipes.append(Recipe.chickenNoodleSoup)
     }
 }

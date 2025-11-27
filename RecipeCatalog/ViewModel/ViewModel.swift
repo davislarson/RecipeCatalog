@@ -22,7 +22,7 @@ final class ViewModel: ContextReferencing {
     
     // MARK: - Navigation properties
     
-    var selectedFilter: RecipeFilter? = nil
+    var selectedFilter: RecipeFilter? = .all
     var selectedRecipe: Recipe? = nil
     var columnVisibility: NavigationSplitViewVisibility = .all
     

@@ -150,4 +150,58 @@ extension Recipe {
             Instruction(order: 9, text: "Let cookies cool on the baking sheet for 2 minutes before transferring to a wire rack to cool completely.", recipe: recipe)
         ]
     }
+    
+    // MARK: - Chicken Noodle Soup
+        static let chickenNoodleSoup: Recipe = {
+            let recipe = Recipe(
+                title: "Classic Chicken Noodle Soup",
+                creator: "Davis Larson",
+                dateCreated: Date(),
+                prepTime: 90,
+                serves: 6,
+                difficulty: .intermidiate,
+                caloriesPerServing: 220,
+                isFavorite: true,
+                notes: "This soup tastes even better the next day! For a richer broth, use bone-in chicken pieces and simmer longer. You can substitute egg noodles with rice or pasta if preferred.",
+                categories: [],
+                ingredients: [],
+                instructions: []
+            )
+            return recipe
+        }()
+        
+        // Helper method to create ingredients for chicken noodle soup
+        static func createChickenNoodleSoupIngredients(recipe: Recipe) -> [Ingredient] {
+            return [
+                Ingredient(order: 1, quantity: "2", unit: "lbs", name: "chicken breast", notes: "boneless, skinless", recipe: recipe),
+                Ingredient(order: 2, quantity: "8", unit: "cups", name: "chicken broth", notes: "low sodium", recipe: recipe),
+                Ingredient(order: 3, quantity: "3", unit: "whole", name: "carrots", notes: "peeled and sliced", recipe: recipe),
+                Ingredient(order: 4, quantity: "3", unit: "stalks", name: "celery", notes: "sliced", recipe: recipe),
+                Ingredient(order: 5, quantity: "1", unit: "whole", name: "onion", notes: "diced", recipe: recipe),
+                Ingredient(order: 6, quantity: "3", unit: "cloves", name: "garlic", notes: "minced", recipe: recipe),
+                Ingredient(order: 7, quantity: "8", unit: "oz", name: "egg noodles", notes: nil, recipe: recipe),
+                Ingredient(order: 8, quantity: "2", unit: "tbsp", name: "olive oil", notes: nil, recipe: recipe),
+                Ingredient(order: 9, quantity: "2", unit: "tsp", name: "dried thyme", notes: nil, recipe: recipe),
+                Ingredient(order: 10, quantity: "2", unit: "whole", name: "bay leaves", notes: nil, recipe: recipe),
+                Ingredient(order: 11, quantity: "1", unit: "tsp", name: "salt", notes: "to taste", recipe: recipe),
+                Ingredient(order: 12, quantity: "1/2", unit: "tsp", name: "black pepper", notes: "to taste", recipe: recipe),
+                Ingredient(order: 13, quantity: "2", unit: "tbsp", name: "fresh parsley", notes: "chopped", recipe: recipe)
+            ]
+        }
+        
+        // Helper method to create instructions for chicken noodle soup
+    static func createChickenNoodleSoupInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "Heat olive oil in a large pot or Dutch oven over medium heat.", recipe: recipe),
+            Instruction(order: 2, text: "Add diced onion, sliced carrots, and celery. Sauté for 5-7 minutes until vegetables begin to soften.", recipe: recipe),
+            Instruction(order: 3, text: "Add minced garlic and cook for another minute until fragrant.", recipe: recipe),
+            Instruction(order: 4, text: "Pour in chicken broth and add bay leaves and thyme. Bring to a boil.", recipe: recipe),
+            Instruction(order: 5, text: "Add chicken breasts to the pot, reduce heat to medium-low, and simmer for 20-25 minutes until chicken is cooked through.", recipe: recipe),
+            Instruction(order: 6, text: "Remove chicken from pot and place on a cutting board. Let cool slightly, then shred or dice into bite-sized pieces.", recipe: recipe),
+            Instruction(order: 7, text: "While chicken cools, bring the soup back to a boil and add egg noodles. Cook according to package directions, usually 8-10 minutes.", recipe: recipe),
+            Instruction(order: 8, text: "Return shredded chicken to the pot. Season with salt and pepper to taste.", recipe: recipe),
+            Instruction(order: 9, text: "Remove bay leaves and discard. Stir in fresh parsley.", recipe: recipe),
+            Instruction(order: 10, text: "Serve hot with crusty bread or crackers on the side.", recipe: recipe)
+        ]
+    }
 }
