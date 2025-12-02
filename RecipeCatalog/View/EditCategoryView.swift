@@ -35,10 +35,8 @@ struct EditCategoryView: View {
                             set: { isSelected in
                                 if isSelected {
                                     selectedRecipes.insert(recipe)
-                                    print(selectedRecipes)
                                 } else {
                                     selectedRecipes.remove(recipe)
-                                    print(selectedRecipes)
                                 }
                             }
                         ))
