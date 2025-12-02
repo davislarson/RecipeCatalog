@@ -16,7 +16,7 @@ struct InfoCard: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.accent)
             
             Text(label)
                 .font(.caption)

@@ -23,7 +23,7 @@ struct CategoryListView: View {
             }
             
             // Categories section
-            Section("Categories") {
+            Section("Categories (swipe for actions)") {
                 ForEach(vm.categories) { category in
                     NavigationLink(category.name, value: RecipeFilter.category(category.name))
                         .swipeActions(edge: .leading) {

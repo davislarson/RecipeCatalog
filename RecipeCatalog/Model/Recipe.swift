@@ -74,9 +74,9 @@ final class Recipe {
     //removeInstruction
 }
 
-enum DifficultyLevel: String, Codable {
+enum DifficultyLevel: String, Codable, CaseIterable {
     case beginner = "Beginner"
-    case intermidiate = "Intermediate"
+    case intermediate = "Intermediate"
     case advanced = "Advanced"
     case expert = "Expert"
 }

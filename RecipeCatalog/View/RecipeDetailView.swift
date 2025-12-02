@@ -84,8 +84,8 @@ struct RecipeDetailView: View {
                                         .font(.subheadline)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 6)
-                                        .background(Color.blue.opacity(0.1))
-                                        .foregroundStyle(.blue)
+                                        .background(.tint.opacity(0.1))
+                                        .foregroundStyle(.tint)
                                         .cornerRadius(8)
                                 }
                             }
@@ -105,7 +105,7 @@ struct RecipeDetailView: View {
                                 HStack(alignment: .top, spacing: 8) {
                                     Text("•")
                                         .font(.headline)
-                                        .foregroundStyle(.blue)
+                                        .foregroundStyle(.tint)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("\(ingredient.quantity) \(ingredient.unit) \(ingredient.name)")
@@ -136,12 +136,12 @@ struct RecipeDetailView: View {
                                 HStack(alignment: .top, spacing: 12) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color.blue.opacity(0.1))
+                                            .fill(.tint.opacity(0.1))
                                             .frame(width: 32, height: 32)
                                         
                                         Text("\(instruction.order)")
                                             .font(.headline)
-                                            .foregroundStyle(.blue)
+                                            .foregroundStyle(.tint)
                                     }
                                     
                                     Text(instruction.text)
@@ -235,7 +235,7 @@ struct RecipeDetailView: View {
         dateCreated: Date(),
         prepTime: 45,
         serves: 8,
-        difficulty: .intermidiate,
+        difficulty: .intermediate,
         caloriesPerServing: 320,
         isFavorite: true,
         notes: "This cake pairs wonderfully with buttercream frosting. For best results, ensure all ingredients are at room temperature.",
@@ -258,3 +258,4 @@ struct RecipeDetailView: View {
         RecipeDetailView(recipe: sampleRecipe)
     }
 }
+

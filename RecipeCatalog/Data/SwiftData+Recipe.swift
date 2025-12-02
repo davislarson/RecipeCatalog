@@ -159,7 +159,7 @@ extension Recipe {
                 dateCreated: Date(),
                 prepTime: 90,
                 serves: 6,
-                difficulty: .intermidiate,
+                difficulty: .intermediate,
                 caloriesPerServing: 220,
                 isFavorite: true,
                 notes: "This soup tastes even better the next day! For a richer broth, use bone-in chicken pieces and simmer longer. You can substitute egg noodles with rice or pasta if preferred.",

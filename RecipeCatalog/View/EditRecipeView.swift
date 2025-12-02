@@ -91,7 +91,7 @@ struct RecipeEditView: View {
                     
                     Picker("Difficulty", selection: $difficulty) {
                         Text("Beginner").tag(DifficultyLevel.beginner)
-                        Text("Intermediate").tag(DifficultyLevel.intermidiate)
+                        Text("Intermediate").tag(DifficultyLevel.intermediate)
                         Text("Advanced").tag(DifficultyLevel.advanced)
                         Text("Expert").tag(DifficultyLevel.expert)
                     }
