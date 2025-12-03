@@ -297,4 +297,55 @@ extension Recipe {
             Instruction(order: 10, text: "Garnish with fresh parsley and lemon slices. Serve immediately.", recipe: recipe)
         ]
     }
+    
+    // MARK: - Philly Cheesesteak
+    static let phillyCheesesteak: Recipe = {
+        let recipe = Recipe(
+            title: "Philly Cheesesteak",
+            creator: "Davis Larson",
+            dateCreated: Date(),
+            prepTime: 25,
+            serves: 4,
+            difficulty: .intermediate,
+            caloriesPerServing: 520,
+            isFavorite: true,
+            notes: "For the most authentic experience, use thinly sliced ribeye and Cheez Whiz, though provolone is a great alternative. Freezing the beef for 30 minutes before slicing makes it easier to cut thin. Some people like to add peppers, but traditional Philly cheesesteaks are just meat, onions, and cheese.",
+            categories: [],
+            ingredients: [],
+            instructions: []
+        )
+        return recipe
+    }()
+
+    // Helper method to create ingredients for philly cheesesteak
+    static func createPhillycheesesteakIngredients(recipe: Recipe) -> [Ingredient] {
+        return [
+            Ingredient(order: 1, quantity: "1.5", unit: "lbs", name: "ribeye steak", notes: "thinly sliced", recipe: recipe),
+            Ingredient(order: 2, quantity: "2", unit: "whole", name: "onions", notes: "thinly sliced", recipe: recipe),
+            Ingredient(order: 3, quantity: "1", unit: "whole", name: "green bell pepper", notes: "thinly sliced (optional)", recipe: recipe),
+            Ingredient(order: 4, quantity: "8", unit: "slices", name: "provolone cheese", notes: "or Cheez Whiz", recipe: recipe),
+            Ingredient(order: 5, quantity: "4", unit: "whole", name: "hoagie rolls", notes: "or sub rolls", recipe: recipe),
+            Ingredient(order: 6, quantity: "3", unit: "tbsp", name: "vegetable oil", notes: "divided", recipe: recipe),
+            Ingredient(order: 7, quantity: "2", unit: "tbsp", name: "butter", notes: nil, recipe: recipe),
+            Ingredient(order: 8, quantity: "1", unit: "tsp", name: "salt", notes: "to taste", recipe: recipe),
+            Ingredient(order: 9, quantity: "1/2", unit: "tsp", name: "black pepper", notes: "to taste", recipe: recipe),
+            Ingredient(order: 10, quantity: "1/2", unit: "tsp", name: "garlic powder", notes: "optional", recipe: recipe)
+        ]
+    }
+
+    // Helper method to create instructions for philly cheesesteak
+    static func createPhillycheesesteakInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "If your steak isn't pre-sliced, place it in the freezer for 20-30 minutes to firm up, then slice as thinly as possible against the grain.", recipe: recipe),
+            Instruction(order: 2, text: "Heat 1 tablespoon of oil in a large skillet or griddle over medium-high heat.", recipe: recipe),
+            Instruction(order: 3, text: "Add sliced onions (and peppers if using) and cook for 5-7 minutes until softened and lightly caramelized. Season with a pinch of salt. Remove from pan and set aside.", recipe: recipe),
+            Instruction(order: 4, text: "Add remaining 2 tablespoons of oil to the same skillet and increase heat to high.", recipe: recipe),
+            Instruction(order: 5, text: "Add the thinly sliced steak in a single layer. Season with salt, pepper, and garlic powder if using.", recipe: recipe),
+            Instruction(order: 6, text: "Cook without stirring for 1-2 minutes to get a good sear, then flip and cook for another 1-2 minutes. Break up any large pieces with your spatula.", recipe: recipe),
+            Instruction(order: 7, text: "Return the cooked onions (and peppers) to the pan and mix with the meat.", recipe: recipe),
+            Instruction(order: 8, text: "Divide the meat mixture into 4 portions in the pan. Place 2 slices of provolone cheese on each portion and let melt, about 1 minute.", recipe: recipe),
+            Instruction(order: 9, text: "While cheese melts, split the hoagie rolls and butter the insides. Toast them in a separate pan or under the broiler until lightly golden.", recipe: recipe),
+            Instruction(order: 10, text: "Scoop each cheesy meat portion into a toasted roll. Serve immediately with hot peppers or ketchup if desired.", recipe: recipe)
+        ]
+    }
 }

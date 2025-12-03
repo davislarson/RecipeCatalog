@@ -162,6 +162,29 @@ extension Category {
         // Assign Categories
         Recipe.chickenPiccata.categories = [dinner]
         dinner.recipes.append(Recipe.chickenPiccata)
+        
+        // MARK: - Philly Cheesesteak
+        modelContext.insert(Recipe.phillyCheesesteak)
+
+        // Create and insert ingredients for philly cheesesteak
+        let phillycheesesteakIngredients = Recipe.createPhillycheesesteakIngredients(recipe: Recipe.phillyCheesesteak)
+        for ingredient in phillycheesesteakIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.phillyCheesesteak.ingredients = phillycheesesteakIngredients
+
+        // Create and insert instructions for philly cheesesteak
+        let phillycheesesteakInstructions = Recipe.createPhillycheesesteakInstructions(recipe: Recipe.phillyCheesesteak)
+        for instruction in phillycheesesteakInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.phillyCheesesteak.instructions = phillycheesesteakInstructions
+
+        // Assign Categories
+        Recipe.phillyCheesesteak.categories = [sandwiches, dinner, comfortFood]
+        sandwiches.recipes.append(Recipe.phillyCheesesteak)
+        dinner.recipes.append(Recipe.phillyCheesesteak)
+        comfortFood.recipes.append(Recipe.phillyCheesesteak)
     }
     
 }
