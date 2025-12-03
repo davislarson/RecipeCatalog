@@ -185,6 +185,30 @@ extension Category {
         sandwiches.recipes.append(Recipe.phillyCheesesteak)
         dinner.recipes.append(Recipe.phillyCheesesteak)
         comfortFood.recipes.append(Recipe.phillyCheesesteak)
+        
+        // MARK: - Soft Pretzels
+        modelContext.insert(Recipe.softPretzels)
+
+        // Create and insert ingredients for soft pretzels
+        let softPretzelsIngredients = Recipe.createSoftPretzelsIngredients(recipe: Recipe.softPretzels)
+        for ingredient in softPretzelsIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.softPretzels.ingredients = softPretzelsIngredients
+
+        // Create and insert instructions for soft pretzels
+        let softPretzelsInstructions = Recipe.createSoftPretzelsInstructions(recipe: Recipe.softPretzels)
+        for instruction in softPretzelsInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.softPretzels.instructions = softPretzelsInstructions
+
+        // Assign Categories
+        Recipe.softPretzels.categories = [desserts, breakfast]
+        desserts.recipes.append(Recipe.softPretzels)
+        comfortFood.recipes.append(Recipe.softPretzels)
+        
+        //ADD NEW RECIPE ASSIGNMENTS HERE
     }
     
 }

@@ -348,4 +348,56 @@ extension Recipe {
             Instruction(order: 10, text: "Scoop each cheesy meat portion into a toasted roll. Serve immediately with hot peppers or ketchup if desired.", recipe: recipe)
         ]
     }
+    // MARK: - Soft Pretzels
+    static let softPretzels: Recipe = {
+        let recipe = Recipe(
+            title: "Soft Pretzels",
+            creator: "Davis Larson",
+            dateCreated: Date(),
+            prepTime: 90,
+            serves: 8,
+            difficulty: .intermediate,
+            caloriesPerServing: 280,
+            isFavorite: false,
+            notes: "The baking soda bath is what gives pretzels their distinctive brown color and chewy texture - don't skip it! Work quickly when boiling as you don't want them to get soggy. These are best eaten fresh and warm, but can be reheated in the oven the next day.",
+            categories: [],
+            ingredients: [],
+            instructions: []
+        )
+        return recipe
+    }()
+
+    // Helper method to create ingredients for soft pretzels
+    static func createSoftPretzelsIngredients(recipe: Recipe) -> [Ingredient] {
+        return [
+            Ingredient(order: 1, quantity: "1.5", unit: "cups", name: "warm water", notes: "110°F", recipe: recipe),
+            Ingredient(order: 2, quantity: "1", unit: "tbsp", name: "sugar", notes: nil, recipe: recipe),
+            Ingredient(order: 3, quantity: "2", unit: "tsp", name: "active dry yeast", notes: "one packet", recipe: recipe),
+            Ingredient(order: 4, quantity: "4.5", unit: "cups", name: "all-purpose flour", notes: "plus more for dusting", recipe: recipe),
+            Ingredient(order: 5, quantity: "2", unit: "tsp", name: "salt", notes: nil, recipe: recipe),
+            Ingredient(order: 6, quantity: "4", unit: "tbsp", name: "butter", notes: "melted", recipe: recipe),
+            Ingredient(order: 7, quantity: "10", unit: "cups", name: "water", notes: "for boiling", recipe: recipe),
+            Ingredient(order: 8, quantity: "2/3", unit: "cup", name: "baking soda", notes: nil, recipe: recipe),
+            Ingredient(order: 9, quantity: "1", unit: "whole", name: "egg", notes: "beaten", recipe: recipe),
+            Ingredient(order: 10, quantity: "3", unit: "tbsp", name: "coarse sea salt", notes: "for topping", recipe: recipe)
+        ]
+    }
+
+    // Helper method to create instructions for soft pretzels
+    static func createSoftPretzelsInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "In a large bowl, combine warm water and sugar. Sprinkle yeast on top and let sit for 5 minutes until foamy.", recipe: recipe),
+            Instruction(order: 2, text: "Add flour, salt, and melted butter to the yeast mixture. Mix until a dough forms.", recipe: recipe),
+            Instruction(order: 3, text: "Knead the dough on a floured surface for 5-7 minutes until smooth and elastic. You can also use a stand mixer with a dough hook for 4-5 minutes.", recipe: recipe),
+            Instruction(order: 4, text: "Place dough in a greased bowl, cover with a damp towel, and let rise in a warm place for 45-60 minutes until doubled in size.", recipe: recipe),
+            Instruction(order: 5, text: "Preheat oven to 450°F (230°C). Line two baking sheets with parchment paper and grease lightly.", recipe: recipe),
+            Instruction(order: 6, text: "Bring 10 cups of water and baking soda to a boil in a large pot.", recipe: recipe),
+            Instruction(order: 7, text: "Punch down the dough and divide into 8 equal pieces. Roll each piece into a 20-24 inch rope.", recipe: recipe),
+            Instruction(order: 8, text: "Form each rope into a pretzel shape: Make a U-shape, cross the ends over each other twice, then bring the ends down and press onto the bottom of the U.", recipe: recipe),
+            Instruction(order: 9, text: "Working one or two at a time, carefully place pretzels into the boiling water for 30 seconds, flipping halfway through. Remove with a slotted spoon and place on prepared baking sheets.", recipe: recipe),
+            Instruction(order: 10, text: "Brush each pretzel with beaten egg and sprinkle generously with coarse sea salt.", recipe: recipe),
+            Instruction(order: 11, text: "Bake for 12-15 minutes until deep golden brown.", recipe: recipe),
+            Instruction(order: 12, text: "Remove from oven and brush with melted butter if desired. Serve warm with mustard or cheese dip.", recipe: recipe)
+        ]
+    }
 }
