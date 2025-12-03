@@ -118,5 +118,29 @@ extension Category {
         soups.recipes.append(Recipe.chickenNoodleSoup)
         comfortFood.recipes.append(Recipe.chickenNoodleSoup)
         dinner.recipes.append(Recipe.chickenNoodleSoup)
+        
+        // MARK: - Grilled Cheese
+        modelContext.insert(Recipe.grilledCheese)
+
+        // Create and insert ingredients for grilled cheese
+        let grilledCheeseIngredients = Recipe.createGrilledCheeseIngredients(recipe: Recipe.grilledCheese)
+        for ingredient in grilledCheeseIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.grilledCheese.ingredients = grilledCheeseIngredients
+
+        // Create and insert instructions for grilled cheese
+        let grilledCheeseInstructions = Recipe.createGrilledCheeseInstructions(recipe: Recipe.grilledCheese)
+        for instruction in grilledCheeseInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.grilledCheese.instructions = grilledCheeseInstructions
+
+        // Assign Categories
+        Recipe.grilledCheese.categories = [quick, sandwiches, comfortFood]
+        quick.recipes.append(Recipe.grilledCheese)
+        sandwiches.recipes.append(Recipe.grilledCheese)
+        comfortFood.recipes.append(Recipe.grilledCheese)
     }
+    
 }

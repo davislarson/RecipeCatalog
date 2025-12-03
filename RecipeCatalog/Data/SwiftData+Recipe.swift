@@ -12,7 +12,7 @@ extension Recipe {
     // MARK: - Pankcakes
     static let pancakes: Recipe = {
         let recipe = Recipe(
-            title: "Classic Fluffy Pancakes",
+            title: "Fluffy Pancakes",
             creator: "Davis Larson",
             dateCreated: Date(),
             prepTime: 20,
@@ -105,7 +105,7 @@ extension Recipe {
     // MARK: - Cookies
     static let cookies: Recipe = {
         let recipe = Recipe(
-            title: "Perfect Chocolate Chip Cookies",
+            title: "Chocolate Chip Cookies",
             creator: "Grandma Larson",
             dateCreated: Date(),
             prepTime: 45,
@@ -154,7 +154,7 @@ extension Recipe {
     // MARK: - Chicken Noodle Soup
         static let chickenNoodleSoup: Recipe = {
             let recipe = Recipe(
-                title: "Classic Chicken Noodle Soup",
+                title: "Chicken Noodle Soup",
                 creator: "Davis Larson",
                 dateCreated: Date(),
                 prepTime: 90,
@@ -202,6 +202,47 @@ extension Recipe {
             Instruction(order: 8, text: "Return shredded chicken to the pot. Season with salt and pepper to taste.", recipe: recipe),
             Instruction(order: 9, text: "Remove bay leaves and discard. Stir in fresh parsley.", recipe: recipe),
             Instruction(order: 10, text: "Serve hot with crusty bread or crackers on the side.", recipe: recipe)
+        ]
+    }
+    // MARK: - Grilled Cheese Sandwich
+    static let grilledCheese: Recipe = {
+        let recipe = Recipe(
+            title: "Classic Grilled Cheese Sandwich",
+            creator: "Davis Larson",
+            dateCreated: Date(),
+            prepTime: 10,
+            serves: 1,
+            difficulty: .beginner,
+            caloriesPerServing: 380,
+            isFavorite: true,
+            notes: "The key to a perfect grilled cheese is low and slow heat. Don't rush it! For extra flavor, add a pinch of garlic powder to the butter before spreading.",
+            categories: [],
+            ingredients: [],
+            instructions: []
+        )
+        return recipe
+    }()
+
+    // Helper method to create ingredients for grilled cheese
+    static func createGrilledCheeseIngredients(recipe: Recipe) -> [Ingredient] {
+        return [
+            Ingredient(order: 1, quantity: "2", unit: "slices", name: "bread", notes: "sourdough or white bread", recipe: recipe),
+            Ingredient(order: 2, quantity: "2", unit: "slices", name: "cheddar cheese", notes: "or cheese of choice", recipe: recipe),
+            Ingredient(order: 3, quantity: "1", unit: "tbsp", name: "butter", notes: "softened", recipe: recipe)
+        ]
+    }
+
+    // Helper method to create instructions for grilled cheese
+    static func createGrilledCheeseInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "Spread softened butter on one side of each bread slice.", recipe: recipe),
+            Instruction(order: 2, text: "Place one slice of bread butter-side down in a cold skillet.", recipe: recipe),
+            Instruction(order: 3, text: "Layer the cheese slices on top of the bread in the pan.", recipe: recipe),
+            Instruction(order: 4, text: "Place the second slice of bread on top, butter-side up.", recipe: recipe),
+            Instruction(order: 5, text: "Turn heat to medium-low and cook for 3-4 minutes until the bottom is golden brown.", recipe: recipe),
+            Instruction(order: 6, text: "Carefully flip the sandwich using a spatula.", recipe: recipe),
+            Instruction(order: 7, text: "Cook for another 2-3 minutes until the second side is golden brown and cheese is melted.", recipe: recipe),
+            Instruction(order: 8, text: "Remove from heat, let cool for 1 minute, then slice diagonally and serve hot.", recipe: recipe)
         ]
     }
 }
