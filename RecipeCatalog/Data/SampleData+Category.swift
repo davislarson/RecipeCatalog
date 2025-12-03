@@ -208,7 +208,52 @@ extension Category {
         desserts.recipes.append(Recipe.softPretzels)
         comfortFood.recipes.append(Recipe.softPretzels)
         
-        //ADD NEW RECIPE ASSIGNMENTS HERE
+        // MARK: - Key Lime Pie
+        modelContext.insert(Recipe.keyLimePie)
+
+        // Create and insert ingredients for key lime pie
+        let keyLimePieIngredients = Recipe.createKeyLimePieIngredients(recipe: Recipe.keyLimePie)
+        for ingredient in keyLimePieIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.keyLimePie.ingredients = keyLimePieIngredients
+
+        // Create and insert instructions for key lime pie
+        let keyLimePieInstructions = Recipe.createKeyLimePieInstructions(recipe: Recipe.keyLimePie)
+        for instruction in keyLimePieInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.keyLimePie.instructions = keyLimePieInstructions
+
+        // Assign Categories
+        Recipe.keyLimePie.categories = [desserts]
+        desserts.recipes.append(Recipe.keyLimePie)
+        
+        // MARK: - Spaghetti
+        modelContext.insert(Recipe.spaghetti)
+
+        // Create and insert ingredients for spaghetti
+        let spaghettiIngredients = Recipe.createSpaghettiIngredients(recipe: Recipe.spaghetti)
+        for ingredient in spaghettiIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.spaghetti.ingredients = spaghettiIngredients
+
+        // Create and insert instructions for spaghetti
+        let spaghettiInstructions = Recipe.createSpaghettiInstructions(recipe: Recipe.spaghetti)
+        for instruction in spaghettiInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.spaghetti.instructions = spaghettiInstructions
+
+        // Assign Categories
+        Recipe.spaghetti.categories = [dinner, comfortFood, cheap]
+        dinner.recipes.append(Recipe.spaghetti)
+        comfortFood.recipes.append(Recipe.spaghetti)
+        cheap.recipes.append(Recipe.spaghetti)
+        
+        
+        //ADD NEW RECIPE ASSIGNMENTS HERE BEFORE THE CLOSING BRACKET
     }
     
 }

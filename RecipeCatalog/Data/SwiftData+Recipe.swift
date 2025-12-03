@@ -58,14 +58,14 @@ extension Recipe {
     static let collegeChipotleBowl: Recipe = {
         let recipe = Recipe(
             title: "College Chipotle Bowl",
-            creator: "Davis+Owen",
+            creator: "Davis and Owen",
             dateCreated: Date(),
             prepTime: 60,
             serves: 8,
             difficulty: .beginner,
             caloriesPerServing: 450,
             isFavorite: false,
-            notes: "Quick and easy, dirty and good enough. The better the toppings the better the meal. Good toppings have been avocado, sirracha mayo, salsa, and sour cream. Some spices for the meat could be garlic powder, cumin, paprika, Tony Chacheries... whatever you're feeling.",
+            notes: "Quick and easy. The better the toppings the better the meal. Good toppings have been avocado, sirracha mayo, salsa, and sour cream. Some spices for the meat could be garlic powder, cumin, paprika, Tony Chacheries... whatever you're feeling.",
             categories: [],
             ingredients: [],
             instructions: []
@@ -112,7 +112,7 @@ extension Recipe {
             serves: 48,
             difficulty: .beginner,
             caloriesPerServing: 180,
-            isFavorite: false,
+            isFavorite: true,
             notes: "For chewier cookies, slightly underbake them. They'll continue to cook on the hot pan after removing from oven.",
             categories: [],
             ingredients: [],
@@ -214,7 +214,7 @@ extension Recipe {
             serves: 1,
             difficulty: .beginner,
             caloriesPerServing: 380,
-            isFavorite: true,
+            isFavorite: false,
             notes: "The key to a perfect grilled cheese is low and slow heat. Don't rush it! For extra flavor, add a pinch of garlic powder to the butter before spreading.",
             categories: [],
             ingredients: [],
@@ -308,7 +308,7 @@ extension Recipe {
             serves: 4,
             difficulty: .intermediate,
             caloriesPerServing: 520,
-            isFavorite: true,
+            isFavorite: false,
             notes: "For the most authentic experience, use thinly sliced ribeye and Cheez Whiz, though provolone is a great alternative. Freezing the beef for 30 minutes before slicing makes it easier to cut thin. Some people like to add peppers, but traditional Philly cheesesteaks are just meat, onions, and cheese.",
             categories: [],
             ingredients: [],
@@ -398,6 +398,117 @@ extension Recipe {
             Instruction(order: 10, text: "Brush each pretzel with beaten egg and sprinkle generously with coarse sea salt.", recipe: recipe),
             Instruction(order: 11, text: "Bake for 12-15 minutes until deep golden brown.", recipe: recipe),
             Instruction(order: 12, text: "Remove from oven and brush with melted butter if desired. Serve warm with mustard or cheese dip.", recipe: recipe)
+        ]
+    }
+    // MARK: - Key Lime Pie
+    static let keyLimePie: Recipe = {
+        let recipe = Recipe(
+            title: "Key Lime Pie",
+            creator: "Davis Larson",
+            dateCreated: Date(),
+            prepTime: 30,
+            serves: 8,
+            difficulty: .intermediate,
+            caloriesPerServing: 410,
+            isFavorite: true,
+            notes: "Traditional key limes are smaller and more tart than regular Persian limes, but regular limes work great too. The pie needs at least 3 hours to chill properly - overnight is even better. For best results, use fresh lime juice rather than bottled.",
+            categories: [],
+            ingredients: [],
+            instructions: []
+        )
+        return recipe
+    }()
+
+    // Helper method to create ingredients for key lime pie
+    static func createKeyLimePieIngredients(recipe: Recipe) -> [Ingredient] {
+        return [
+            Ingredient(order: 1, quantity: "1.5", unit: "cups", name: "graham cracker crumbs", notes: "about 10-12 crackers", recipe: recipe),
+            Ingredient(order: 2, quantity: "1/3", unit: "cup", name: "sugar", notes: "for crust", recipe: recipe),
+            Ingredient(order: 3, quantity: "6", unit: "tbsp", name: "butter", notes: "melted", recipe: recipe),
+            Ingredient(order: 4, quantity: "4", unit: "whole", name: "egg yolks", notes: "large eggs", recipe: recipe),
+            Ingredient(order: 5, quantity: "2", unit: "cans", name: "sweetened condensed milk", notes: "14 oz each", recipe: recipe),
+            Ingredient(order: 6, quantity: "2/3", unit: "cup", name: "fresh key lime juice", notes: "or regular lime juice, about 8-10 limes", recipe: recipe),
+            Ingredient(order: 7, quantity: "1", unit: "tbsp", name: "lime zest", notes: "finely grated", recipe: recipe),
+            Ingredient(order: 8, quantity: "1", unit: "cup", name: "heavy whipping cream", notes: "for topping", recipe: recipe),
+            Ingredient(order: 9, quantity: "2", unit: "tbsp", name: "powdered sugar", notes: "for whipped cream", recipe: recipe),
+            Ingredient(order: 10, quantity: "1", unit: "whole", name: "lime", notes: "sliced thin for garnish", recipe: recipe)
+        ]
+    }
+
+    // Helper method to create instructions for key lime pie
+    static func createKeyLimePieInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "Preheat oven to 350°F (175°C).", recipe: recipe),
+            Instruction(order: 2, text: "In a medium bowl, combine graham cracker crumbs, sugar, and melted butter. Mix until the texture resembles wet sand.", recipe: recipe),
+            Instruction(order: 3, text: "Press the crumb mixture firmly into the bottom and up the sides of a 9-inch pie pan. Use the bottom of a measuring cup to pack it down evenly.", recipe: recipe),
+            Instruction(order: 4, text: "Bake the crust for 10 minutes until lightly golden. Remove from oven and let cool slightly.", recipe: recipe),
+            Instruction(order: 5, text: "In a large bowl, whisk together egg yolks and lime zest until tinted light green, about 2 minutes.", recipe: recipe),
+            Instruction(order: 6, text: "Add sweetened condensed milk and whisk until smooth and fully combined.", recipe: recipe),
+            Instruction(order: 7, text: "Add the lime juice and whisk until well blended. The mixture will thicken slightly.", recipe: recipe),
+            Instruction(order: 8, text: "Pour the filling into the pre-baked graham cracker crust.", recipe: recipe),
+            Instruction(order: 9, text: "Bake for 15-17 minutes until the filling is set but still has a slight jiggle in the center.", recipe: recipe),
+            Instruction(order: 10, text: "Remove from oven and cool to room temperature on a wire rack, about 30 minutes.", recipe: recipe),
+            Instruction(order: 11, text: "Cover with plastic wrap and refrigerate for at least 3 hours or overnight until fully chilled and set.", recipe: recipe),
+            Instruction(order: 12, text: "Before serving, whip the heavy cream with powdered sugar until stiff peaks form. Spread or pipe whipped cream over the pie.", recipe: recipe),
+            Instruction(order: 13, text: "Garnish with lime slices and additional lime zest if desired. Slice and serve cold.", recipe: recipe)
+        ]
+    }
+    
+    // MARK: - Spaghetti with Meat Sauce
+    static let spaghetti: Recipe = {
+        let recipe = Recipe(
+            title: "Spaghetti with Meat Sauce",
+            creator: "Davis Larson",
+            dateCreated: Date(),
+            prepTime: 45,
+            serves: 6,
+            difficulty: .beginner,
+            caloriesPerServing: 480,
+            isFavorite: false,
+            notes: "The sauce tastes even better if you let it simmer longer - up to 2 hours for a richer flavor. You can also make a big batch and freeze leftovers for easy weeknight dinners. Add a pinch of sugar if the sauce tastes too acidic.",
+            categories: [],
+            ingredients: [],
+            instructions: []
+        )
+        return recipe
+    }()
+
+    // Helper method to create ingredients for spaghetti
+    static func createSpaghettiIngredients(recipe: Recipe) -> [Ingredient] {
+        return [
+            Ingredient(order: 1, quantity: "1", unit: "lb", name: "spaghetti pasta", notes: nil, recipe: recipe),
+            Ingredient(order: 2, quantity: "1", unit: "lb", name: "ground beef", notes: "or ground Italian sausage", recipe: recipe),
+            Ingredient(order: 3, quantity: "1", unit: "whole", name: "onion", notes: "diced", recipe: recipe),
+            Ingredient(order: 4, quantity: "4", unit: "cloves", name: "garlic", notes: "minced", recipe: recipe),
+            Ingredient(order: 5, quantity: "1", unit: "can", name: "crushed tomatoes", notes: "28 oz", recipe: recipe),
+            Ingredient(order: 6, quantity: "1", unit: "can", name: "tomato sauce", notes: "15 oz", recipe: recipe),
+            Ingredient(order: 7, quantity: "2", unit: "tbsp", name: "tomato paste", notes: nil, recipe: recipe),
+            Ingredient(order: 8, quantity: "1", unit: "tsp", name: "dried basil", notes: nil, recipe: recipe),
+            Ingredient(order: 9, quantity: "1", unit: "tsp", name: "dried oregano", notes: nil, recipe: recipe),
+            Ingredient(order: 10, quantity: "1/2", unit: "tsp", name: "red pepper flakes", notes: "optional", recipe: recipe),
+            Ingredient(order: 11, quantity: "1", unit: "tsp", name: "salt", notes: "to taste", recipe: recipe),
+            Ingredient(order: 12, quantity: "1/2", unit: "tsp", name: "black pepper", notes: "to taste", recipe: recipe),
+            Ingredient(order: 13, quantity: "2", unit: "tbsp", name: "olive oil", notes: nil, recipe: recipe),
+            Ingredient(order: 14, quantity: "1/4", unit: "cup", name: "fresh basil", notes: "chopped, for garnish", recipe: recipe),
+            Ingredient(order: 15, quantity: "1/2", unit: "cup", name: "parmesan cheese", notes: "grated, for serving", recipe: recipe)
+        ]
+    }
+
+    // Helper method to create instructions for spaghetti
+    static func createSpaghettiInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "Heat olive oil in a large pot or deep skillet over medium-high heat.", recipe: recipe),
+            Instruction(order: 2, text: "Add diced onion and cook for 5 minutes until softened and translucent.", recipe: recipe),
+            Instruction(order: 3, text: "Add minced garlic and cook for 1 minute until fragrant.", recipe: recipe),
+            Instruction(order: 4, text: "Add ground beef, breaking it up with a wooden spoon. Cook for 7-10 minutes until browned. Drain excess fat if needed.", recipe: recipe),
+            Instruction(order: 5, text: "Stir in tomato paste and cook for 1-2 minutes to deepen the flavor.", recipe: recipe),
+            Instruction(order: 6, text: "Add crushed tomatoes, tomato sauce, basil, oregano, red pepper flakes (if using), salt, and black pepper. Stir to combine.", recipe: recipe),
+            Instruction(order: 7, text: "Bring the sauce to a boil, then reduce heat to low and simmer for 20-30 minutes, stirring occasionally. The sauce should thicken and the flavors will meld.", recipe: recipe),
+            Instruction(order: 8, text: "While the sauce simmers, bring a large pot of salted water to a boil.", recipe: recipe),
+            Instruction(order: 9, text: "Cook spaghetti according to package directions until al dente, usually 8-10 minutes. Reserve 1/2 cup of pasta water before draining.", recipe: recipe),
+            Instruction(order: 10, text: "Drain the pasta and add it to the sauce, tossing to coat. If the sauce is too thick, add a splash of reserved pasta water.", recipe: recipe),
+            Instruction(order: 11, text: "Taste and adjust seasoning with more salt and pepper if needed.", recipe: recipe),
+            Instruction(order: 12, text: "Serve hot, garnished with fresh basil and grated parmesan cheese. Serve with garlic bread on the side.", recipe: recipe)
         ]
     }
 }
