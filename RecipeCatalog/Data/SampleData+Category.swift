@@ -141,6 +141,27 @@ extension Category {
         quick.recipes.append(Recipe.grilledCheese)
         sandwiches.recipes.append(Recipe.grilledCheese)
         comfortFood.recipes.append(Recipe.grilledCheese)
+        
+        // MARK: - Chicken Piccata
+        modelContext.insert(Recipe.chickenPiccata)
+
+        // Create and insert ingredients for chicken piccata
+        let chickenPiccataIngredients = Recipe.createChickenPiccataIngredients(recipe: Recipe.chickenPiccata)
+        for ingredient in chickenPiccataIngredients {
+            modelContext.insert(ingredient)
+        }
+        Recipe.chickenPiccata.ingredients = chickenPiccataIngredients
+
+        // Create and insert instructions for chicken piccata
+        let chickenPiccataInstructions = Recipe.createChickenPiccataInstructions(recipe: Recipe.chickenPiccata)
+        for instruction in chickenPiccataInstructions {
+            modelContext.insert(instruction)
+        }
+        Recipe.chickenPiccata.instructions = chickenPiccataInstructions
+
+        // Assign Categories
+        Recipe.chickenPiccata.categories = [dinner]
+        dinner.recipes.append(Recipe.chickenPiccata)
     }
     
 }

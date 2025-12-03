@@ -207,7 +207,7 @@ extension Recipe {
     // MARK: - Grilled Cheese Sandwich
     static let grilledCheese: Recipe = {
         let recipe = Recipe(
-            title: "Classic Grilled Cheese Sandwich",
+            title: "Grilled Cheese Sandwich",
             creator: "Davis Larson",
             dateCreated: Date(),
             prepTime: 10,
@@ -243,6 +243,58 @@ extension Recipe {
             Instruction(order: 6, text: "Carefully flip the sandwich using a spatula.", recipe: recipe),
             Instruction(order: 7, text: "Cook for another 2-3 minutes until the second side is golden brown and cheese is melted.", recipe: recipe),
             Instruction(order: 8, text: "Remove from heat, let cool for 1 minute, then slice diagonally and serve hot.", recipe: recipe)
+        ]
+    }
+    // MARK: - Chicken Piccata
+    static let chickenPiccata: Recipe = {
+        let recipe = Recipe(
+            title: "Chicken Piccata",
+            creator: "Davis Larson",
+            dateCreated: Date(),
+            prepTime: 30,
+            serves: 4,
+            difficulty: .advanced,
+            caloriesPerServing: 320,
+            isFavorite: true,
+            notes: "The sauce should be tangy and buttery. If it's too acidic, add a bit more butter. If too thick, add a splash of chicken broth. Serve over pasta, rice, or with crusty bread to soak up the delicious sauce.",
+            categories: [],
+            ingredients: [],
+            instructions: []
+        )
+        return recipe
+    }()
+
+    // Helper method to create ingredients for chicken piccata
+    static func createChickenPiccataIngredients(recipe: Recipe) -> [Ingredient] {
+        return [
+            Ingredient(order: 1, quantity: "4", unit: "whole", name: "chicken breasts", notes: "boneless, skinless, pounded thin", recipe: recipe),
+            Ingredient(order: 2, quantity: "1/2", unit: "cup", name: "all-purpose flour", notes: "for dredging", recipe: recipe),
+            Ingredient(order: 3, quantity: "1", unit: "tsp", name: "salt", notes: nil, recipe: recipe),
+            Ingredient(order: 4, quantity: "1/2", unit: "tsp", name: "black pepper", notes: nil, recipe: recipe),
+            Ingredient(order: 5, quantity: "3", unit: "tbsp", name: "olive oil", notes: nil, recipe: recipe),
+            Ingredient(order: 6, quantity: "4", unit: "tbsp", name: "butter", notes: "divided", recipe: recipe),
+            Ingredient(order: 7, quantity: "3", unit: "cloves", name: "garlic", notes: "minced", recipe: recipe),
+            Ingredient(order: 8, quantity: "1", unit: "cup", name: "chicken broth", notes: "low sodium", recipe: recipe),
+            Ingredient(order: 9, quantity: "1/3", unit: "cup", name: "fresh lemon juice", notes: "about 2 lemons", recipe: recipe),
+            Ingredient(order: 10, quantity: "1/4", unit: "cup", name: "capers", notes: "drained", recipe: recipe),
+            Ingredient(order: 11, quantity: "1/4", unit: "cup", name: "fresh parsley", notes: "chopped", recipe: recipe),
+            Ingredient(order: 12, quantity: "1", unit: "whole", name: "lemon", notes: "sliced thin for garnish", recipe: recipe)
+        ]
+    }
+
+    // Helper method to create instructions for chicken piccata
+    static func createChickenPiccataInstructions(recipe: Recipe) -> [Instruction] {
+        return [
+            Instruction(order: 1, text: "Place chicken breasts between plastic wrap and pound to about 1/2 inch thickness using a meat mallet.", recipe: recipe),
+            Instruction(order: 2, text: "In a shallow dish, combine flour, salt, and pepper. Dredge each chicken breast in the flour mixture, shaking off excess.", recipe: recipe),
+            Instruction(order: 3, text: "Heat olive oil and 2 tablespoons of butter in a large skillet over medium-high heat.", recipe: recipe),
+            Instruction(order: 4, text: "Once hot, add chicken breasts and cook for 3-4 minutes per side until golden brown and cooked through. Remove chicken and set aside on a plate.", recipe: recipe),
+            Instruction(order: 5, text: "In the same skillet, add minced garlic and sauté for about 30 seconds until fragrant.", recipe: recipe),
+            Instruction(order: 6, text: "Pour in chicken broth and lemon juice, scraping up any browned bits from the bottom of the pan.", recipe: recipe),
+            Instruction(order: 7, text: "Bring the sauce to a boil, then reduce heat and simmer for 5 minutes until slightly reduced.", recipe: recipe),
+            Instruction(order: 8, text: "Stir in capers and the remaining 2 tablespoons of butter (with a splash of the brine of the capers) until butter is melted and sauce is smooth.", recipe: recipe),
+            Instruction(order: 9, text: "Return chicken to the skillet and spoon sauce over the top. Cook for 2-3 minutes to heat through.", recipe: recipe),
+            Instruction(order: 10, text: "Garnish with fresh parsley and lemon slices. Serve immediately.", recipe: recipe)
         ]
     }
 }
