@@ -109,7 +109,7 @@ struct RecipeListView: View {
                 : "This will remove \(count) recipes from \(categoryName). The recipes will still exist in other categories."
         } else {
             return count == 1
-                ? "This will permanently delete the recipe from your catalog."
+                ? "This will permanently delete this recipe from your catalog."
                 : "This will permanently delete \(count) recipes from your catalog."
         }
     }

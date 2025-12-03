@@ -67,11 +67,40 @@ final class Recipe {
         categories.removeAll(where: { $0.name == category.name })
     }
     
-    // TODO
-    //addIngredient
-    //removeIngredient
-    //addInstruction
-    //removeInstruction
+    func addIngredient(_ ingredient: Ingredient) {
+        ingredient.recipe = self  // Set the relationship
+        ingredients.append(ingredient)
+    }
+
+    func removeIngredient(_ ingredient: Ingredient) {
+        ingredients.removeAll(where: { $0.order == ingredient.order })
+    }
+
+    func updateIngredient(at index: Int, order: Int, quantity: String, unit: String, name: String, notes: String?) {
+        guard ingredients.indices.contains(index) else { return }
+        let ingredient = ingredients[index]
+        ingredient.order = order
+        ingredient.quantity = quantity
+        ingredient.unit = unit
+        ingredient.name = name
+        ingredient.notes = notes
+    }
+    
+    func addInstruction(_ instruction: Instruction) {
+        instruction.recipe = self
+        instructions.append(instruction)
+    }
+
+    func removeInstruction(_ instruction: Instruction) {
+        instructions.removeAll(where: { $0.order == instruction.order })
+    }
+
+    func updateInstruction(at index: Int, order: Int, text: String) {
+        guard instructions.indices.contains(index) else { return }
+        let instruction = instructions[index]
+        instruction.order = order
+        instruction.text = text
+    }
 }
 
 enum DifficultyLevel: String, Codable, CaseIterable {

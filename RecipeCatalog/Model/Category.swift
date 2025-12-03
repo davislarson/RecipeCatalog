@@ -22,6 +22,13 @@ final class Category {
         self.recipes = recipes
     }
     
-    // addRecipe
-    // removeReicpe
+    func addRecipe(_ recipe: Recipe) {
+        if !recipes.contains(where: { $0.title == recipe.title }) {
+            recipes.append(recipe)
+        }
+    }
+
+    func removeRecipe(_ recipe: Recipe) {
+        recipes.removeAll(where: { $0.title == recipe.title })
+    }
 }

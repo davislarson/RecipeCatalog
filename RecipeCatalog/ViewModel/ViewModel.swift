@@ -54,11 +54,8 @@ final class ViewModel: ContextReferencing {
     
     // MARK: - Data retrieval
     
-    // This gives the UI the data that is already initialized from the presets
-    
     func fetchRecipes(for filter: RecipeFilter = .all) {
         let descriptor: FetchDescriptor<Recipe>
-        
         
         switch filter {
         case .all:
@@ -66,7 +63,6 @@ final class ViewModel: ContextReferencing {
                 sortBy: [SortDescriptor(\.title)]
             )
         case .category(let categoryName):
-            // Fetch all recipes with this category
             descriptor = FetchDescriptor<Recipe>(
                 predicate: #Predicate<Recipe> { recipe in
                     recipe.categories.contains(where: { $0.name == categoryName })
@@ -86,7 +82,6 @@ final class ViewModel: ContextReferencing {
             let lowercasedTerm = searchTerm.lowercased()
             descriptor = FetchDescriptor<Recipe>(
                 predicate: #Predicate<Recipe> { recipe in
-                    // Only searching on title, creator, and notes currently
                     recipe.title.localizedStandardContains(lowercasedTerm) ||
                     recipe.creator.localizedStandardContains(lowercasedTerm) ||
                     (recipe.notes?.localizedStandardContains(lowercasedTerm) ?? false)
@@ -101,7 +96,6 @@ final class ViewModel: ContextReferencing {
             print("Error fetching recipes: \(error)")
             recipes = []
         }
-        
     }
     
     func fetchCategories() {
@@ -119,39 +113,48 @@ final class ViewModel: ContextReferencing {
     
     var allCategories: [Category] {
         let descriptor = FetchDescriptor<Category>(sortBy: [SortDescriptor(\.name)])
-        
         return (try? modelContext.fetch(descriptor)) ?? []
     }
     
     var allRecipes: [Recipe]  {
         let descriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
-        
         return (try? modelContext.fetch(descriptor)) ?? []
     }
   
-    // MARK: - User Intents
+    // MARK: - Recipe User Intents
     
-    func addRecipe(title: String, creator: String, dateCreated: Date,
-                    prepTime: Int, serves: Int, difficulty: DifficultyLevel,
-                    caloriesPerServing: Int?, isFavorite: Bool, notes: String?,
-                    categories: [Category], ingredients: [Ingredient],
-                    instructions: [Instruction]) {
-      let recipe = Recipe(
-          title: title,
-          creator: creator,
-          dateCreated: dateCreated,
-          prepTime: prepTime,
-          serves: serves,
-          difficulty: difficulty,
-          caloriesPerServing: caloriesPerServing,
-          isFavorite: isFavorite,
-          notes: notes,
-          categories: categories,
-          ingredients: ingredients,
-          instructions: instructions
-      )
-      modelContext.insert(recipe)
-  }
+    func addRecipe(title: String,
+                   creator: String,
+                   dateCreated: Date,
+                   prepTime: Int,
+                   serves: Int,
+                   difficulty: DifficultyLevel,
+                   caloriesPerServing: Int?,
+                   isFavorite: Bool,
+                   notes: String?,
+                   categories: [Category],
+                   ingredients: [Ingredient],
+                   instructions: [Instruction]
+    ) {
+        let recipe = Recipe(
+            title: title,
+            creator: creator,
+            dateCreated: dateCreated,
+            prepTime: prepTime,
+            serves: serves,
+            difficulty: difficulty,
+            caloriesPerServing: caloriesPerServing,
+            isFavorite: isFavorite,
+            notes: notes,
+            categories: categories,
+            ingredients: ingredients,
+            instructions: instructions
+        )
+        modelContext.insert(recipe)
+        saveChanges()
+        selectedFilter = .all
+        fetchRecipes()
+    }
     
     func deleteRecipes(offsets: IndexSet) {
         for index in offsets {
@@ -160,120 +163,11 @@ final class ViewModel: ContextReferencing {
         }
         saveChanges()
         
-        // Run the filter again.
         if let filter = selectedFilter {
             fetchRecipes(for: filter)
         }
     }
     
-    func removeRecipeFromCategory(_ recipe: Recipe, categoryName: String) {
-        // Find the category
-        guard let category = categories.first(where: { $0.name == categoryName }) else {
-            return
-        }
-        
-        // Remove the recipe from the category
-        recipe.removeCategory(category)
-        
-        saveChanges()
-        
-        // Refresh the recipe list for the current filter
-        if let filter = selectedFilter {
-            fetchRecipes(for: filter)
-        }
-    }
-    
-    func createCategory(name: String, recipes: [Recipe]) {
-        let trimmedName = name.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
-        
-        let newCategory = Category(name: trimmedName, recipes: [])
-        modelContext.insert(newCategory)
-        
-        // Add selected recipes to the new category
-        for recipe in recipes {
-            recipe.addCategory(newCategory)
-        }
-        
-        saveChanges()
-        fetchCategories()
-    }
-
-    func updateCategory(_ category: Category, name: String, recipes: [Recipe]) {
-        let trimmedName = name.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
-        
-        // Update category name
-        category.name = trimmedName
-        
-        // Update recipe associations
-        let currentRecipes = Set(category.recipes)
-        let newRecipes = Set(recipes)
-        
-        // Remove recipes that were deselected
-        let recipesToRemove = currentRecipes.subtracting(newRecipes)
-        for recipe in recipesToRemove {
-            recipe.removeCategory(category)
-        }
-        
-        // Add newly selected recipes
-        let recipesToAdd = newRecipes.subtracting(currentRecipes)
-        for recipe in recipesToAdd {
-            recipe.addCategory(category)
-        }
-        
-        saveChanges()
-        fetchCategories()
-        
-        // Refresh the recipe list if viewing that category or just return all of the recipes
-        if case .category(let categoryName) = selectedFilter, categoryName == category.name {
-            fetchRecipes(for: selectedFilter ?? .all)
-        }
-    }
-    
-    func deleteCategories(offsets: IndexSet) {
-        for index in offsets {
-            let category = categories[index]
-            modelContext.delete(category)
-        }
-        saveChanges()
-        fetchCategories()
-    }
-    
-    func deleteAllIngredients(from recipe: Recipe) {
-        recipe.ingredients.forEach { ingredient in
-            modelContext.delete(ingredient)
-        }
-        recipe.ingredients.removeAll()
-    }
-    
-    func deleteIngredient(_ ingredient: Ingredient) {
-        modelContext.delete(ingredient)
-    }
-    
-    func insertIngredient(_ ingredient: Ingredient) {
-        modelContext.insert(ingredient)
-    }
-    
-    func deleteAllInstructions(from recipe: Recipe) {
-        recipe.instructions.forEach { instruction in
-            modelContext.delete(instruction)
-        }
-        recipe.instructions.removeAll()
-    }
-
-    func deleteInstruction(_ instruction: Instruction) {
-        modelContext.delete(instruction)
-    }
-    
-    func insertInstruction(_ instruction: Instruction) {
-        modelContext.insert(instruction)
-    }
-    
-    func saveChanges() {
-        try? modelContext.save()
-    }
-
     func updateRecipe(
         _ recipe: Recipe,
         title: String,
@@ -299,10 +193,29 @@ final class ViewModel: ContextReferencing {
         recipe.caloriesPerServing = caloriesPerServing
         recipe.isFavorite = isFavorite
         recipe.notes = notes
-        recipe.categories = categories
         
-        // Handle ingredients
-        deleteAllIngredients(from: recipe)
+        // Update categories - handle the many-to-many relationship
+        let currentCategories = Set(recipe.categories)
+        let newCategories = Set(categories)
+        
+        // Remove categories that were deselected
+        let categoriesToRemove = currentCategories.subtracting(newCategories)
+        for category in categoriesToRemove {
+            recipe.removeCategory(category)
+        }
+        
+        // Add newly selected categories
+        let categoriesToAdd = newCategories.subtracting(currentCategories)
+        for category in categoriesToAdd {
+            recipe.addCategory(category)
+        }
+        
+        // Handle ingredients - delete old ones and add new ones
+        for ingredient in recipe.ingredients {
+            modelContext.delete(ingredient)
+        }
+        recipe.ingredients.removeAll()
+        
         for ingredientData in ingredients {
             let newIngredient = Ingredient(
                 order: ingredientData.order,
@@ -312,50 +225,138 @@ final class ViewModel: ContextReferencing {
                 notes: ingredientData.notes,
                 recipe: recipe
             )
-            recipe.ingredients.append(newIngredient)
-            insertIngredient(newIngredient)
+            recipe.addIngredient(newIngredient)
+            modelContext.insert(newIngredient)
         }
         
-        // Handle instructions
-        deleteAllInstructions(from: recipe)
+        // Handle instructions - delete old ones and add new ones
+        for instruction in recipe.instructions {
+            modelContext.delete(instruction)
+        }
+        recipe.instructions.removeAll()
+        
         for instructionData in instructions {
             let newInstruction = Instruction(
                 order: instructionData.order,
                 text: instructionData.text,
                 recipe: recipe
             )
-            recipe.instructions.append(newInstruction)
-            insertInstruction(newInstruction)
+            recipe.addInstruction(newInstruction)
+            modelContext.insert(newInstruction)
         }
         
         saveChanges()
     }
-
-    func addCategoryToRecipe(_ category: Category, recipe: Recipe) {
-        if !recipe.categories.contains(where: { $0.name == category.name }) {
-            recipe.categories.append(category)
-            saveChanges()
+    
+    func removeRecipeFromCategory(_ recipe: Recipe, categoryName: String) {
+        guard let category = categories.first(where: { $0.name == categoryName }) else {
+            return
+        }
+        
+        // Use the model method
+        recipe.removeCategory(category)
+        
+        saveChanges()
+        
+        if let filter = selectedFilter {
+            fetchRecipes(for: filter)
         }
     }
-
-    func removeCategoryFromRecipe(_ category: Category, recipe: Recipe) {
-        recipe.categories.removeAll { $0.name == category.name }
+    
+    func addCategoryToRecipe(_ category: Category, recipe: Recipe) {
+        // Use the model method
+        recipe.addCategory(category)
         saveChanges()
     }
 
+    func removeCategoryFromRecipe(_ category: Category, recipe: Recipe) {
+        // Use the model method
+        recipe.removeCategory(category)
+        saveChanges()
+    }
+    
+    // MARK: - Category User Intents
+    
+    func createCategory(name: String, recipes: [Recipe] = []) {
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmedName.isEmpty else { return }
+        
+        let newCategory = Category(name: trimmedName, recipes: [])
+        modelContext.insert(newCategory)
+        
+        // Add selected recipes to the new category using model methods
+        for recipe in recipes {
+            newCategory.addRecipe(recipe)
+        }
+        
+        saveChanges()
+        fetchCategories()
+    }
+
+    func updateCategory(_ category: Category, name: String, recipes: [Recipe]) {
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmedName.isEmpty else { return }
+        
+        // Update category name
+        category.name = trimmedName
+        
+        // Update recipe associations using model methods
+        let currentRecipes = Set(category.recipes)
+        let newRecipes = Set(recipes)
+        
+        // Remove recipes that were deselected
+        let recipesToRemove = currentRecipes.subtracting(newRecipes)
+        for recipe in recipesToRemove {
+            category.removeRecipe(recipe)
+        }
+        
+        // Add newly selected recipes
+        let recipesToAdd = newRecipes.subtracting(currentRecipes)
+        for recipe in recipesToAdd {
+            category.addRecipe(recipe)
+        }
+        
+        saveChanges()
+        fetchCategories()
+        
+        // Refresh the recipe list if viewing that category
+        if case .category(let categoryName) = selectedFilter, categoryName == category.name {
+            fetchRecipes(for: selectedFilter ?? .all)
+        }
+    }
+    
+    func deleteCategories(offsets: IndexSet) {
+        for index in offsets {
+            let category = categories[index]
+            modelContext.delete(category)
+        }
+        saveChanges()
+        fetchCategories()
+    }
+    
+    // MARK: - Helper Methods
+    
     func getAvailableCategories(excluding selected: [Category]) -> [Category] {
         allCategories.filter { category in
             !selected.contains(where: { $0.name == category.name })
         }
     }
     
+    func saveChanges() {
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving context: \(error)")
+        }
+    }
     
     // MARK: - Context referencing
     func update() {
         fetchCategories()
     }
-    
 }
+
+// MARK: - Recipe Filter Enum
 
 enum RecipeFilter: Equatable, Hashable {
     case all

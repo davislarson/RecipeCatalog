@@ -58,7 +58,7 @@ struct CreateRecipeView: View {
                 }
                 Section("Recipe Details") {
                     Stepper("Prep Time: \(prepTime) min", value: $prepTime, in: 0...500, step: 5)
-                    Stepper("Servings: \(serves)", value: $serves, in: 1...100)
+                    Stepper("Servings: \(serves)", value: $serves, in: 1...100, step: 1)
                     
                     Picker("Difficulty", selection: $difficulty) {
                         Text("Beginner").tag(DifficultyLevel.beginner)
