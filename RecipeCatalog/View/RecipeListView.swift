@@ -14,6 +14,7 @@ struct RecipeListView: View {
     @State private var showAddRecipeSheet: Bool = false
     @State private var searchText: String = ""
     @State private var showDeleteAlert: Bool = false
+    @State private var recipeToEdit: Recipe?
     @State private var recipesToDelete: IndexSet = []
     @State private var deleteFromCategory: String? = nil
     
@@ -43,6 +44,14 @@ struct RecipeListView: View {
                     List(selection: $vm.selectedRecipe) {
                         ForEach(vm.recipes) { recipe in
                             NavigationLink(recipe.title, value: recipe)
+                                .swipeActions(edge: .leading) {
+                                    Button {
+                                        recipeToEdit = recipe
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
+                                    .tint(.blue)
+                                }
                         }
                         .onDelete { offsets in
                             prepareDelete(at: offsets, filter: filter)
@@ -80,6 +89,9 @@ struct RecipeListView: View {
         }
         .sheet(isPresented: $showAddRecipeSheet) {
             CreateRecipeView()
+        }
+        .sheet(item: $recipeToEdit) { recipe in
+            RecipeEditView(recipe: recipe)
         }
         .alert(alertTitle, isPresented: $showDeleteAlert) {
             Button("Cancel", role: .cancel) {}
