@@ -9,7 +9,6 @@ import Foundation
 import SwiftData
 
 
-// TODO: create computed var to change format of the quantity
 @Model
 final class Ingredient {
     var order: Int

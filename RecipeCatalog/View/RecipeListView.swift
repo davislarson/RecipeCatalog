@@ -9,31 +9,32 @@ import SwiftUI
 
 struct RecipeListView: View {
     let recipeFilter: RecipeFilter?
+    @Binding var searchText: String
     
     @Environment(ViewModel.self) private var vm
     @State private var showAddRecipeSheet: Bool = false
-    @State private var searchText: String = ""
     @State private var showDeleteAlert: Bool = false
     @State private var recipeToEdit: Recipe?
     @State private var recipesToDelete: IndexSet = []
     @State private var deleteFromCategory: String? = nil
+    
+    private var shouldShowRemove: Bool {
+        if case .category = recipeFilter {
+            return true
+        }
+        return false
+    }
+    
+    init(recipeFilter: RecipeFilter?, searchText: Binding<String>) {
+        self.recipeFilter = recipeFilter
+        _searchText = searchText
+    }
     
     var body: some View {
         @Bindable var vm = vm
         
         VStack(alignment: .leading, spacing: 0) {
             if let filter = recipeFilter {
-                TextField("Search all recipes...", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
-                    .padding()
-                    .onChange(of: searchText) { oldValue, newValue in
-                        if !newValue.isEmpty {
-                            vm.fetchRecipes(for: .search(newValue))
-                        } else {
-                            vm.fetchRecipes(for: filter)
-                        }
-                    }
-                
                 if vm.recipes.isEmpty {
                     Spacer()
                     Text("No recipes found.")
@@ -52,9 +53,15 @@ struct RecipeListView: View {
                                     }
                                     .tint(.blue)
                                 }
-                        }
-                        .onDelete { offsets in
-                            prepareDelete(at: offsets, filter: filter)
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        if let index = vm.recipes.firstIndex(where: { $0.id == recipe.id }) {
+                                            prepareDelete(at: IndexSet(integer: index), filter: filter)
+                                        }
+                                    } label: {
+                                        Label(shouldShowRemove ? "Remove" : "Delete", systemImage: "trash")
+                                    }
+                                }
                         }
                     }
                 }
@@ -65,15 +72,13 @@ struct RecipeListView: View {
                     description: Text("Choose a category from the sidebar to view recipes.")
                 )
             }
-        }        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
-            }
+        }
+        .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     showAddRecipeSheet = true
                 } label: {
-                    Label("Add Item", systemImage: "plus")
+                    Text("Create Recipe")
                 }
             }
         }
@@ -86,6 +91,9 @@ struct RecipeListView: View {
             if searchText.isEmpty, let filter = newValue {
                 vm.fetchRecipes(for: filter)
             }
+        }
+        .onChange(of: searchText) { oldValue, newValue in
+            vm.fetchRecipes(for: .search(newValue))
         }
         .sheet(isPresented: $showAddRecipeSheet) {
             CreateRecipeView()
@@ -164,5 +172,5 @@ struct RecipeListView: View {
 }
 
 #Preview {
-    RecipeListView(recipeFilter: RecipeFilter.category("Desserts"))
+//    RecipeListView(recipeFilter: RecipeFilter.category("Desserts"), searchText: "")
 }
