@@ -20,9 +20,7 @@ struct ThreeColumnContentView: View {
             RecipeListView(recipeFilter: vm.selectedFilter, searchText: $searchText)
                 .navigationTitle(vm.contentListTitle)
         } detail: {
-            NavigationStack{
-                RecipeDetailView(recipe: vm.selectedRecipe)
-            }
+            RecipeDetailView(recipe: vm.selectedRecipe)
         }
         .searchable(text: $searchText, placement: .sidebar, prompt: "Search all recipes...")
     }
