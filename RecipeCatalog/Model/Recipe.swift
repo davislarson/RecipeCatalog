@@ -110,4 +110,16 @@ enum DifficultyLevel: String, Codable, CaseIterable {
     case expert = "Expert"
 }
 
+extension Recipe {
+    var searchString: String {
+        var result = "\(title) \(creator) \(notes ?? "")"
+        
+        ingredients.forEach {
+            result += $0.searchString
+        }
+        
+        return result.lowercased()
+    }
+}
+
 

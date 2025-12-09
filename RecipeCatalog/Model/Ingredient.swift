@@ -29,3 +29,9 @@ final class Ingredient {
     }
 
 }
+
+extension Ingredient {
+    var searchString: String {
+        "\(name) \(notes ?? "")"
+    }
+}

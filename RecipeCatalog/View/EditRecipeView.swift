@@ -7,7 +7,7 @@
 import SwiftUI
 import SwiftData
 
-// This view and its child components were highly inspired through my conversation with claude AI
+// This view and its "child components" were highly inspired through my conversation with claude AI
 // https://claude.ai/share/17b86691-0458-44a3-90eb-bf2766f3623d
 
 struct RecipeEditView: View {

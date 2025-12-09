@@ -78,14 +78,10 @@ final class ViewModel: ContextReferencing {
                 sortBy: [SortDescriptor(\.title)]
             )
             
-        case .search(let searchTerm):
-            let lowercasedTerm = searchTerm.lowercased()
+        case .search(_):
+            // Get everything and filter after.
+            // NOTE: I made this change after a getting super far into the project. #predicate can only use stored values not computed vars. Therefore in order to keep the application similar and not totally refactor things, update in this way by filtering after searching for all recipes.
             descriptor = FetchDescriptor<Recipe>(
-                predicate: #Predicate<Recipe> { recipe in
-                    recipe.title.localizedStandardContains(lowercasedTerm) ||
-                    recipe.creator.localizedStandardContains(lowercasedTerm) ||
-                    (recipe.notes?.localizedStandardContains(lowercasedTerm) ?? false)
-                },
                 sortBy: [SortDescriptor(\.title)]
             )
         }
@@ -95,6 +91,13 @@ final class ViewModel: ContextReferencing {
         } catch {
             print("Error fetching recipes: \(error)")
             recipes = []
+        }
+        
+        if case .search(let searchTerm) = filter {
+            let lowercasedTerm = searchTerm.lowercased()
+            recipes = recipes.filter { recipe in
+                recipe.searchString.localizedStandardContains(lowercasedTerm)
+            }
         }
     }
     
