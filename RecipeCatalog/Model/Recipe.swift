@@ -118,6 +118,10 @@ extension Recipe {
             result += $0.searchString
         }
         
+        categories.forEach {
+            result += $0.name
+        }
+        
         return result.lowercased()
     }
 }
