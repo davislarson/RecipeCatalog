@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Foundation
 
 @Observable
 final class ViewModel: ContextReferencing {
@@ -27,6 +28,17 @@ final class ViewModel: ContextReferencing {
     var columnVisibility: NavigationSplitViewVisibility = .all
     
     var sideBarTitle = "Recipe Catalog"
+
+    // MARK: - Timer Properties
+
+    var isTimerRunning = false
+    var remainingSeconds = 0
+    var activeTimerName: String?
+    var completedTimerName: String?
+    var showTimerFinishedAlert = false
+
+    @ObservationIgnored
+    private var timer: Timer?
     
     var contentListTitle: String {
         guard let filter = selectedFilter else {
@@ -352,10 +364,77 @@ final class ViewModel: ContextReferencing {
             print("Error saving context: \(error)")
         }
     }
+
+    // MARK: - Timer Intents
+
+    var remainingTimeDisplay: String {
+        let hours = remainingSeconds / 3600
+        let minutes = (remainingSeconds % 3600) / 60
+        let seconds = remainingSeconds % 60
+
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        }
+
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    func startTimer(minutes: Int, name: String?) {
+        let safeMinutes = max(1, minutes)
+        let trimmedName = name?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        timer?.invalidate()
+        timer = nil
+
+        remainingSeconds = safeMinutes * 60
+        activeTimerName = (trimmedName?.isEmpty == false) ? trimmedName : nil
+        completedTimerName = nil
+        showTimerFinishedAlert = false
+        isTimerRunning = true
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            self?.handleTimerTick()
+        }
+    }
+
+    func clearFinishedTimerAlert() {
+        showTimerFinishedAlert = false
+        completedTimerName = nil
+    }
+
+    private func handleTimerTick() {
+        guard isTimerRunning else {
+            timer?.invalidate()
+            timer = nil
+            return
+        }
+
+        if remainingSeconds > 0 {
+            remainingSeconds -= 1
+        }
+
+        if remainingSeconds <= 0 {
+            finishTimer()
+        }
+    }
+
+    private func finishTimer() {
+        timer?.invalidate()
+        timer = nil
+        isTimerRunning = false
+        completedTimerName = activeTimerName
+        activeTimerName = nil
+        remainingSeconds = 0
+        showTimerFinishedAlert = true
+    }
     
     // MARK: - Context referencing
     func update() {
         fetchCategories()
+    }
+
+    deinit {
+        timer?.invalidate()
     }
 }
 
